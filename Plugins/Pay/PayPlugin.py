@@ -28,7 +28,7 @@ class PayPlugin(PluginBase):
 
     @staticmethod
     def _prepare_message(command, final_order_cost):
-        return "Blik: {}\nNumer konta: {}\nKwota: {}".format(command.blik, command.account_number, float(final_order_cost)/100)
+        return "Blik: {}\nAccount number: {}\nAmount: {}".format(command.blik, command.account_number, float(final_order_cost)/100)
 
     @staticmethod
     def _prepare_qrcode(command, final_order_cost):
