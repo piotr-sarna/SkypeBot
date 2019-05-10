@@ -5,10 +5,10 @@ import pkgutil
 
 import Plugins
 
-from Core.IBotPlugin import IBotPlugin
+from Core.PluginBase import PluginBase
 
 
-class PluginLoader:
+class PluginsLoader:
     def __init__(self):
         pass
 
@@ -32,7 +32,7 @@ class PluginLoader:
 
             plugin_class = plugin_classes[0][1]
 
-            if not issubclass(plugin_class, IBotPlugin):
+            if not issubclass(plugin_class, PluginBase):
                 print '\'' + name + '\': plugin class must inherit from IBotPlugin'
                 continue
 

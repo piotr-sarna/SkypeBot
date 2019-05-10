@@ -1,7 +1,7 @@
-from Core.IBotPlugin import IBotPlugin
+from Core.PluginBase import PluginBase
 
 
-class PayPlugin(IBotPlugin):
+class PayPlugin(PluginBase):
     def keywords(self):
         return ['pay']
 
