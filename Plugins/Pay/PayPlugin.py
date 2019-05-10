@@ -1,6 +1,5 @@
 import io
 import qrcode
-from PIL import Image
 
 from Core.PluginBase import PluginBase
 from Command import Command
