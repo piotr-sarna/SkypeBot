@@ -27,7 +27,7 @@ class Command:
     @staticmethod
     def _parse_order_cost(line):
         split_line = line.split(" ", 1)
-        user_id = split_line[0].strip()
+        user_id = split_line[0].strip()[1:]
         amount = split_line[1].strip().replace(',', '.')
         amount = int(float(amount) * 100)
 
