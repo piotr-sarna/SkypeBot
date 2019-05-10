@@ -12,3 +12,6 @@ class PluginBase:
 
     @abstractmethod
     def handle(self, message): raise NotImplementedError
+
+    @abstractmethod
+    def help_message(self): raise NotImplementedError

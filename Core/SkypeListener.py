@@ -10,11 +10,14 @@ class SkypeListener(SkypeEventLoop):
 
     def onEvent(self, event):
         if isinstance(event, SkypeNewMessageEvent) and not event.msg.userId == self.userId:
-            keyword = self._get_keyword(event.msg.content)
+            keyword = self._get_keyword(event.msg.markup)
 
             if keyword and keyword in self._handlers:
                 handler = self._handlers[keyword]
-                handler.handle(event.msg)
+                try:
+                    handler.handle(event.msg)
+                except Exception as e:
+                    print e
 
     def _prepare_handlers(self, plugins):
         result = {}
