@@ -43,7 +43,7 @@ class PayPlugin(PluginBase):
             command.transfer_title if command.transfer_title else "",
         )
 
-        qr_code = qrcode.make(qr_code_text)
+        qr_code = qrcode.make(qr_code_text, box_size=5, border=12)
         img_byte_arr = io.BytesIO()
         qr_code.save(img_byte_arr, format='PNG')
         img_byte_arr.seek(0)
