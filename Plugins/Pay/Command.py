@@ -2,12 +2,16 @@
 class Command:
 
     def __init__(self):
+        self.help = False
         self.blik = None
         self.account_number = None
         self.account_owner_name = None
         self.transfer_title = None
         self.delivery_cost = 0
         self.order_costs = {}
+
+    def _set_help(self, value):
+        self.help = True
 
     def _set_blik(self, value):
         self.blik = value
@@ -37,6 +41,7 @@ class Command:
     def parse(cls, message):
         result = Command()
         resolvers = {
+            "#help": result._set_help,
             "#blik": result._set_blik,
             "#acc_number": result._account_number,
             "#acc_name": result._account_owner_name,

@@ -8,6 +8,12 @@ class PluginBase:
         self._skype = skype
 
     @abstractmethod
+    def friendly_name(self): raise NotImplementedError
+
+    @abstractmethod
+    def version(self): raise NotImplementedError
+
+    @abstractmethod
     def keywords(self): raise NotImplementedError
 
     @abstractmethod

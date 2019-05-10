@@ -6,11 +6,21 @@ from Command import Command
 
 
 class PayPlugin(PluginBase):
+    def friendly_name(self):
+        return 'Pay plugin'
+
+    def version(self):
+        return '0.1'
+
     def keywords(self):
         return ['pay']
 
     def handle(self, message):
         command = Command.parse(message=message.markup)
+
+        if command.help:
+            self._skype.contacts[message.userId].chat.sendMsg(self.help_message())
+            return
 
         for contact, order_cost in command.order_costs.iteritems():
             final_order_cost = self._calculate_final_order_cost(command=command, order_cost=order_cost)
@@ -23,8 +33,21 @@ class PayPlugin(PluginBase):
                 self._skype.contacts[contact].chat.sendFile(qr_code, "qr_code.png", image=True)
 
     def help_message(self):
-        # TODO
-        return "TODO: Fill help message"
+        return """{friendly_name} v{version}
+
+Keywords: {keywords}
+Commands:
+    #help - Displays this help message
+    #blik - Telephone number for Blik transfer
+    #acc_number - Bank account number
+    #acc_name - Bank account holder's name
+    #title - Transfer title
+    #delivery - Delivery total cost, it will be split equally among all participants
+    @SKYPEID AMOUNT - Skype ID of the participant and cost
+""".format(friendly_name=self.friendly_name(),
+           version=self.version(),
+           keywords=','.join(['#' + keyword for keyword in self.keywords()])
+           )
 
     @staticmethod
     def _prepare_message(command, final_order_cost):
