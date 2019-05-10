@@ -17,7 +17,9 @@ class SkypeListener(SkypeEventLoop):
                 try:
                     handler.handle(event.msg)
                 except Exception as e:
-                    print e
+                    message = handler.help_message() + '\n\nException:\n' + str(e)
+                    self.contacts[event.msg.userId].chat.sendMsg(message)
+                    print message
 
     def _prepare_handlers(self, plugins):
         result = {}
