@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="69aecc02-2f37-4ad7-ab13-9ef78e53832f" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/IBotPlugin.py" beforeDir="false" afterPath="$PROJECT_DIR$/Core/PluginBase.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/PluginLoader.py" beforeDir="false" afterPath="$PROJECT_DIR$/Core/PluginsLoader.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Core/PluginsLoader.py" beforeDir="false" afterPath="$PROJECT_DIR$/Core/PluginsLoader.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Core/SkypeListener.py" beforeDir="false" afterPath="$PROJECT_DIR$/Core/SkypeListener.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Plugins/Pay/PayPlugin.py" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Pay/PayPlugin.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
@@ -21,7 +19,7 @@
         <entry file="file://$PROJECT_DIR$/main.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="210">
-              <caret line="14" selection-start-line="14" selection-end-line="14" />
+              <caret line="14" column="79" selection-start-line="14" selection-start-column="79" selection-end-line="14" selection-end-column="79" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
               </folding>
@@ -29,11 +27,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Core/SkypeListener.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="45">
-              <caret line="3" column="29" selection-start-line="3" selection-start-column="29" selection-end-line="3" selection-end-column="29" />
+            <state relative-caret-position="561">
+              <caret line="41" column="31" selection-start-line="41" selection-start-column="31" selection-end-line="41" selection-end-column="31" />
             </state>
           </provider>
         </entry>
@@ -47,11 +45,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Core/PluginsLoader.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="121">
-              <caret line="10" column="14" lean-forward="true" selection-start-line="10" selection-start-column="14" selection-end-line="10" selection-end-column="14" />
+            <state relative-caret-position="391">
+              <caret line="28" column="40" lean-forward="true" selection-start-line="28" selection-start-column="40" selection-end-line="30" selection-end-column="24" />
               <folding>
                 <element signature="e#1#15#0" expanded="true" />
               </folding>
@@ -90,8 +88,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Plugins/Pay/PayPlugin.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="135">
-              <caret line="9" lean-forward="true" selection-start-line="9" selection-end-line="9" />
+            <state relative-caret-position="150">
+              <caret line="10" lean-forward="true" selection-start-line="10" selection-end-line="10" />
             </state>
           </provider>
         </entry>
@@ -99,8 +97,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Core/PluginBase.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="120">
-              <caret line="8" lean-forward="true" selection-start-line="8" selection-end-line="8" />
+            <state>
+              <caret column="39" selection-start-column="39" selection-end-column="39" />
             </state>
           </provider>
         </entry>
@@ -122,15 +120,15 @@
       <list>
         <option value="$PROJECT_DIR$/SkypeListener.py" />
         <option value="$PROJECT_DIR$/environment.env" />
-        <option value="$PROJECT_DIR$/Plugins/Pay/PayPlugin.py" />
         <option value="$PROJECT_DIR$/Plugins/Pay/__init__.py" />
         <option value="$PROJECT_DIR$/Core/PluginLoader.py" />
-        <option value="$PROJECT_DIR$/main.py" />
-        <option value="$PROJECT_DIR$/Core/PluginsLoader.py" />
-        <option value="$PROJECT_DIR$/Core/SkypeListener.py" />
         <option value="$PROJECT_DIR$/Core/IBotPlugin.py" />
         <option value="$PROJECT_DIR$/Core/BotPlugin.py" />
         <option value="$PROJECT_DIR$/Core/PluginBase.py" />
+        <option value="$PROJECT_DIR$/Core/PluginsLoader.py" />
+        <option value="$PROJECT_DIR$/main.py" />
+        <option value="$PROJECT_DIR$/Plugins/Pay/PayPlugin.py" />
+        <option value="$PROJECT_DIR$/Core/SkypeListener.py" />
       </list>
     </option>
   </component>
@@ -166,6 +164,10 @@
               <item name="SkypeBot" type="462c0819:PsiDirectoryNode" />
               <item name="Plugins" type="462c0819:PsiDirectoryNode" />
               <item name="Pay" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="SkypeBot" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
             </path>
           </expand>
           <select />
@@ -211,6 +213,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1680" height="1050" extended-state="0" />
+    <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.20735383" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -236,13 +239,8 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Plugins/Pay/PayPlugin.py</url>
-          <line>8</line>
+          <line>9</line>
           <option name="timeStamp" value="2" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/main.py</url>
-          <line>14</line>
-          <option name="timeStamp" value="4" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
@@ -329,13 +327,6 @@
     <entry file="file://$PROJECT_DIR$/Plugins/__init__.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/Plugins/Pay/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="31" selection-start-column="31" selection-end-column="31" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file:///System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/importlib/__init__.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -346,13 +337,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Core/SkypeListener.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="45">
-          <caret line="3" column="29" selection-start-line="3" selection-start-column="29" selection-end-line="3" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/venv/lib/python2.7/site-packages/skpy/main.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="225">
@@ -360,37 +344,51 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Plugins/Pay/PayPlugin.py">
+    <entry file="file://$PROJECT_DIR$/Plugins/Pay/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="9" lean-forward="true" selection-start-line="9" selection-end-line="9" />
+        <state>
+          <caret column="31" selection-start-column="31" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Core/PluginsLoader.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="391">
+          <caret line="28" column="40" lean-forward="true" selection-start-line="28" selection-start-column="40" selection-end-line="30" selection-end-column="24" />
+          <folding>
+            <element signature="e#1#15#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Core/PluginBase.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="8" lean-forward="true" selection-start-line="8" selection-end-line="8" />
+        <state>
+          <caret column="39" selection-start-column="39" selection-end-column="39" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Plugins/Pay/PayPlugin.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="150">
+          <caret line="10" lean-forward="true" selection-start-line="10" selection-end-line="10" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="210">
-          <caret line="14" selection-start-line="14" selection-end-line="14" />
+          <caret line="14" column="79" selection-start-line="14" selection-start-column="79" selection-end-line="14" selection-end-column="79" />
           <folding>
             <element signature="e#0#9#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Core/PluginsLoader.py">
+    <entry file="file://$PROJECT_DIR$/Core/SkypeListener.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="121">
-          <caret line="10" column="14" lean-forward="true" selection-start-line="10" selection-start-column="14" selection-end-line="10" selection-end-column="14" />
-          <folding>
-            <element signature="e#1#15#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="561">
+          <caret line="41" column="31" selection-start-line="41" selection-start-column="31" selection-end-line="41" selection-end-column="31" />
         </state>
       </provider>
     </entry>

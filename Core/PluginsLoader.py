@@ -13,13 +13,13 @@ class PluginsLoader:
         pass
 
     @staticmethod
-    def iter_namespace(ns_pkg):
+    def __iter_namespace(ns_pkg):
         return pkgutil.iter_modules(ns_pkg.__path__, ns_pkg.__name__ + ".")
 
     def load(self):
         result = []
 
-        for _, name, is_pkg in self.iter_namespace(Plugins):
+        for _, name, is_pkg in self.__iter_namespace(Plugins):
             if not is_pkg:
                 continue
 

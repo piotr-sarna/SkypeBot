@@ -12,6 +12,6 @@ if __name__ == '__main__':
         exit(-1)
 
     plugins = PluginsLoader().load()
-    ping = SkypeListener(username=username, password=password)
+    skype = SkypeListener(username=username, password=password, plugins=plugins)
 
-    ping.loop()
+    skype.loop()

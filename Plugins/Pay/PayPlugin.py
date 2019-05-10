@@ -6,4 +6,5 @@ class PayPlugin(PluginBase):
         return ['pay']
 
     def handle(self, message):
+        message.chat.sendMsg("Simple response")
         pass
