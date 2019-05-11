@@ -14,4 +14,5 @@ if __name__ == '__main__':
     plugins = PluginsLoader().load()
     skype = SkypeListener(username=username, password=password, plugins=plugins)
 
+    skype.setPresence()
     skype.loop()
