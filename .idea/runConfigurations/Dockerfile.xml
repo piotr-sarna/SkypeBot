@@ -7,7 +7,7 @@
         <option name="command" value="" />
         <option name="containerName" value="" />
         <option name="entrypoint" value="" />
-        <option name="imageTag" value="skypebot" />
+        <option name="imageTag" value="sarnapiotr/skypebot" />
         <option name="commandLineOptions" value="" />
         <option name="sourceFilePath" value="Dockerfile" />
       </settings>
