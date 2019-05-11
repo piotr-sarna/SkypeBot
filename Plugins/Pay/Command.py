@@ -1,6 +1,5 @@
 
 class Command:
-
     def __init__(self):
         self.help = False
         self.blik = None
@@ -48,6 +47,7 @@ class Command:
             "#title": result._transfer_title,
             "#delivery": result._delivery_cost,
         }
+
         lines = [line.strip() for line in message.splitlines()]
 
         for line in lines:

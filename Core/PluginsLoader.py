@@ -1,11 +1,10 @@
-
 import inspect
 import importlib
 import pkgutil
 
 import Plugins
 
-from Core.PluginBase import PluginBase
+from .PluginBase import PluginBase
 
 
 class PluginsLoader:

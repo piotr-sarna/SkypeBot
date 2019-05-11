@@ -1,8 +1,9 @@
 import io
 import qrcode
+from skpy import SkypeNewMessageEvent
 
 from Core.PluginBase import PluginBase
-from Plugins.Pay.Command import Command
+from .Command import Command
 
 
 class PayPlugin(PluginBase):
@@ -15,7 +16,11 @@ class PayPlugin(PluginBase):
     def keywords(self):
         return ['pay']
 
-    def handle(self, message):
+    def handle(self, event):
+        if not isinstance(event, SkypeNewMessageEvent):
+            return
+
+        message = event.msg
         command = Command.parse(message=message.markup)
 
         if command.help:

@@ -17,7 +17,7 @@ class PluginBase:
     def keywords(self): raise NotImplementedError
 
     @abstractmethod
-    def handle(self, message): raise NotImplementedError
+    def handle(self, event): raise NotImplementedError
 
     @abstractmethod
     def help_message(self): raise NotImplementedError
