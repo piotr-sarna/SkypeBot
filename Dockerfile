@@ -4,6 +4,7 @@ RUN mkdir /app
 WORKDIR /app
 
 COPY main.py .
+COPY version.py .
 COPY LICENSE .
 COPY requirements.txt .
 

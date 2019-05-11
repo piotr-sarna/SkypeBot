@@ -2,7 +2,6 @@ import os
 from Core.PluginsLoader import PluginsLoader
 from Core.SkypeListener import SkypeListener
 
-
 if __name__ == '__main__':
     username = os.environ.get('SKYPE_BOT_USERNAME', None)
     password = os.environ.get('SKYPE_BOT_PASSWORD', None)
