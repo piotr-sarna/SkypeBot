@@ -28,6 +28,9 @@ class PayPlugin(PluginBase):
             return
 
         for contact, order_cost in command.order_costs.items():
+            if contact == "me":
+                contact = event.msg.userId
+
             final_order_cost = self._calculate_final_order_cost(command=command, order_cost=order_cost)
             message = self._prepare_message(command=command, final_order_cost=final_order_cost)
             qr_code = self._prepare_qrcode(command=command, final_order_cost=final_order_cost)
@@ -56,7 +59,17 @@ Commands:
 
     @staticmethod
     def _prepare_message(command, final_order_cost):
-        return "Blik: {}\nAccount number: {}\nAmount: {}".format(command.blik, command.account_number, float(final_order_cost)/100)
+        result = []
+
+        if command.blik:
+            result.append("Blik: {}".format(command.blik))
+
+        if command.account_number:
+            result.append("Account number: {}".format(command.account_number))
+
+        result.append("Amount: {}".format(float(final_order_cost)/100))
+
+        return "\n".join(result)
 
     @staticmethod
     def _prepare_qrcode(command, final_order_cost):
