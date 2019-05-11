@@ -2,7 +2,7 @@ import io
 import qrcode
 
 from Core.PluginBase import PluginBase
-from Command import Command
+from Plugins.Pay.Command import Command
 
 
 class PayPlugin(PluginBase):
@@ -22,7 +22,7 @@ class PayPlugin(PluginBase):
             self._skype.contacts[message.userId].chat.sendMsg(self.help_message())
             return
 
-        for contact, order_cost in command.order_costs.iteritems():
+        for contact, order_cost in command.order_costs.items():
             final_order_cost = self._calculate_final_order_cost(command=command, order_cost=order_cost)
             message = self._prepare_message(command=command, final_order_cost=final_order_cost)
             qr_code = self._prepare_qrcode(command=command, final_order_cost=final_order_cost)

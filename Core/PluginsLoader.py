@@ -27,13 +27,13 @@ class PluginsLoader:
             plugin_classes = inspect.getmembers(module, inspect.isclass)
 
             if len(plugin_classes) != 1:
-                print '\'' + name + '\': plugin module must import exactly one class'
+                print('\'' + name + '\': plugin module must import exactly one class')
                 continue
 
             plugin_class = plugin_classes[0][1]
 
             if not issubclass(plugin_class, PluginBase):
-                print '\'' + name + '\': plugin class must inherit from IBotPlugin'
+                print('\'' + name + '\': plugin class must inherit from IBotPlugin')
                 continue
 
             result.append(plugin_class)

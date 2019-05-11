@@ -19,7 +19,7 @@ class SkypeListener(SkypeEventLoop):
                 except Exception as e:
                     message = handler.help_message() + '\n\nException:\n' + str(e)
                     self.contacts[event.msg.userId].chat.sendMsg(message)
-                    print message
+                    print(message)
 
     def _prepare_handlers(self, plugins):
         result = {}
@@ -30,7 +30,7 @@ class SkypeListener(SkypeEventLoop):
                 keyword = keyword.lower()
 
                 if keyword in result:
-                    print 'Plugins\' keywords conflict for \'' + keyword + '\''
+                    print('Plugins\' keywords conflict for \'' + keyword + '\'')
                     exit(-1)
 
                 result[keyword] = plugin

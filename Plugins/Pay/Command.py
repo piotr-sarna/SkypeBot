@@ -56,7 +56,7 @@ class Command:
 
                 result.order_costs[user_id] = amount
             else:
-                for key, resolver in resolvers.iteritems():
+                for key, resolver in resolvers.items():
                     if line.startswith(key):
                         value = line[len(key):].strip()
                         resolver(value=value)

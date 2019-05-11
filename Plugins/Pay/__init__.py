@@ -1,1 +1,1 @@
-from PayPlugin import PayPlugin
+from Plugins.Pay.PayPlugin import PayPlugin
