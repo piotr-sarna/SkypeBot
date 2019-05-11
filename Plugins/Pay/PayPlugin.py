@@ -42,7 +42,7 @@ Commands:
     #acc_number - Bank account number
     #acc_name - Bank account holder's name
     #title - Transfer title
-    #delivery - Delivery total cost, it will be split equally among all participants
+    #delivery AMOUNT - Delivery total cost, it will be split equally among all participants
     @SKYPEID AMOUNT - Skype ID of the participant and cost
 """.format(friendly_name=self.friendly_name(),
            version=self.version(),
