@@ -1,7 +1,6 @@
 import io
 import qrcode
-from skpy import SkypeNewMessageEvent, SkypeSingleChat, SkypeGroupChat
-from skpy.msg import SkypeMsg
+from skpy import SkypeNewMessageEvent, SkypeGroupChat
 
 from Core.PluginBase import PluginBase
 from .Command import Command
