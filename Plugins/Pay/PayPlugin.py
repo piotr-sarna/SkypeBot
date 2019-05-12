@@ -1,6 +1,7 @@
 import io
 import qrcode
-from skpy import SkypeNewMessageEvent
+from skpy import SkypeNewMessageEvent, SkypeSingleChat, SkypeGroupChat
+from skpy.msg import SkypeMsg
 
 from Core.PluginBase import PluginBase
 from .Command import Command
@@ -28,7 +29,7 @@ class PayPlugin(PluginBase):
 
         self._handle_me_participant(message=message, command=command)
         self._verify_participants(message=message, command=command)
-        self._send_summary_to_participants(command=command)
+        self._send_summary_to_participants(message=message, command=command)
 
     def help_message(self):
         return """{friendly_name} v{version}
@@ -47,9 +48,18 @@ Commands:
            keywords=','.join(['#' + keyword for keyword in self.keywords()])
            )
 
-    @staticmethod
-    def _prepare_message(command, final_order_cost):
+    def _prepare_message(self, message, command, final_order_cost):
+        chat = message.chat
         result = []
+
+        result.append("[{}] Summary:".format(self.friendly_name()))
+        result.append("{group_origin}{user_name} ({user_id}) {time}".format(
+            group_origin="\"{topic}\" ".format(topic=chat.topic) if isinstance(chat, SkypeGroupChat) else "",
+            user_name=message.user.name,
+            user_id=message.user.id,
+            time=str(message.time.replace(microsecond=0))
+        ))
+        result.append("")
 
         if command.blik:
             result.append("Blik: {}".format(command.blik))
@@ -107,13 +117,13 @@ Commands:
         if not participants <= chat_users:
             raise Exception("You cannot specify participants from outside the conversation")
 
-    def _send_summary_to_participants(self, command):
+    def _send_summary_to_participants(self, message, command):
         for participant, order_cost in command.order_costs.items():
             final_order_cost = self._calculate_final_order_cost(command=command, order_cost=order_cost)
-            message = self._prepare_message(command=command, final_order_cost=final_order_cost)
+            summary = self._prepare_message(message=message, command=command, final_order_cost=final_order_cost)
             qr_code = self._prepare_qrcode(command=command, final_order_cost=final_order_cost)
 
-            self._skype.contacts[participant].chat.sendMsg(message)
+            self._skype.contacts[participant].chat.sendMsg(summary)
 
             if qr_code:
                 self._skype.contacts[participant].chat.sendFile(qr_code, "qr_code.png", image=True)
