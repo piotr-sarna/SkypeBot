@@ -11,7 +11,7 @@ class PayPlugin(PluginBase):
         return 'Pay plugin'
 
     def version(self):
-        return '0.2'
+        return '0.3'
 
     def keywords(self):
         return ['pay']
