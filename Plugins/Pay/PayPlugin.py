@@ -52,7 +52,7 @@ Commands:
         result = []
 
         result.append("[{}] Summary:".format(self.friendly_name()))
-        result.append("{group_origin}{user_name} ({user_id}) {time}".format(
+        result.append("{group_origin}{user_name} ({user_id}) {time} UTC".format(
             group_origin="\"{topic}\" ".format(topic=chat.topic) if isinstance(chat, SkypeGroupChat) else "",
             user_name=message.user.name,
             user_id=message.user.id,
