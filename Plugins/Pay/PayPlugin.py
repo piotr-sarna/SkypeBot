@@ -46,10 +46,10 @@ class PayPlugin(PluginBase):
 Keywords: {keywords}
 Commands:
     #help - Displays this help message
-    #blik - Telephone number for Blik transfer
-    #acc_number - Bank account number
-    #acc_name - Bank account holder's name
-    #title - Transfer title
+    #blik TELEPHONE_NUMBER - Telephone number for Blik transfer
+    #acc_number ACCOUNT_NUMBER - Bank account number
+    #acc_name ACCOUNT_HOLDER_NUMBER - Bank account holder's name
+    #title TITLE - Transfer title
     #delivery AMOUNT - Delivery total cost, it will be split equally among all participants
     @SKYPEID AMOUNT - Skype ID of the participant and cost
 """.format(friendly_name=self.friendly_name(),
