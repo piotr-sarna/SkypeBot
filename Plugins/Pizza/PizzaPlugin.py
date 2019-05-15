@@ -149,4 +149,8 @@ Pizzas to order: {pizzas}
             self._orders.pop(existing_idx[0])
 
         self._orders.append((message.user, command.number_of_slices))
+        total_ordered_slices = sum(order[1] for order in self._orders)
+        missing_slices = self._NUMBER_OF_PIZZA_SLICES - total_ordered_slices % self._NUMBER_OF_PIZZA_SLICES
+
         self._skype.contacts[message.userId].chat.sendMsg("You've registered for {no_slices} #pizza slice(s)".format(no_slices=command.number_of_slices))
+        message.chat.sendMsg("{missing_slices} slice(s) are missing for the next #pizza".format(missing_slices=missing_slices))
