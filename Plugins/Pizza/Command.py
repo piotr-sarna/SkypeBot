@@ -2,7 +2,7 @@
 class Command:
     def __init__(self):
         self.help = False
-        self.number_of_pieces = None
+        self.number_of_slices = None
         self.start = False
         self.stop = False
         self.cost = False
@@ -10,9 +10,9 @@ class Command:
     def _set_help(self, value):
         self.help = True
 
-    def _set_number_of_pieces(self, value):
+    def _set_number_of_slices(self, value):
         if value:
-            self.number_of_pieces = int(value)
+            self.number_of_slices = int(value)
 
     def _set_start(self, value):
         self.start = True
@@ -26,7 +26,7 @@ class Command:
     def _known_commands(self):
         return {
             "#help": self._set_help,
-            "#pizza": self._set_number_of_pieces,
+            "#pizza": self._set_number_of_slices,
             "#start": self._set_start,
             "#stop": self._set_stop,
             "#cost": self._set_cost,
