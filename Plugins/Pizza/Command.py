@@ -5,7 +5,7 @@ class Command:
         self.number_of_slices = None
         self.start = False
         self.stop = False
-        self.cost = False
+        self.cost = None
 
     def _set_help(self, value):
         self.help = True
@@ -21,7 +21,7 @@ class Command:
         self.stop = True
 
     def _set_cost(self, value):
-        self.cost = True
+        self.cost = int(float(value.replace(',', '.'))*100)
 
     def _known_commands(self):
         return {

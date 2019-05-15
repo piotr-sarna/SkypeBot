@@ -1,3 +1,4 @@
+import math
 from skpy import SkypeNewMessageEvent, SkypeEditMessageEvent
 
 from Core.PluginBase import PluginBase
@@ -37,7 +38,7 @@ class PizzaPlugin(PluginBase):
             self._handle_start(message=message, command=command)
         elif command.stop:
             self._handle_stop(message=message, command=command)
-        elif command.cost:
+        elif command.cost is not None:
             self._handle_cost(message=message, command=command)
         elif command.number_of_slices:
             self._handle_number_of_slices(message=message, command=command)
@@ -68,7 +69,7 @@ Commands:
         commands_number = 0
         commands_number += 1 if command.start else 0
         commands_number += 1 if command.stop else 0
-        commands_number += 1 if command.cost else 0
+        commands_number += 1 if command.cost is not None else 0
         commands_number += 1 if command.number_of_slices else 0
 
         if commands_number != 1:
@@ -137,7 +138,34 @@ Pizzas to order: {pizzas}
         )
 
     def _handle_cost(self, message, command):
-        pass
+        if not self._started_by:
+            raise Exception("No #pizza is currently started")
+
+        if self._started_by.id != message.userId:
+            raise Exception("Only user which started #pizza can 'cost' it")
+
+        total_ordered_slices = sum(order[1] for order in self._orders)
+        if total_ordered_slices:
+            slice_cost = command.cost / total_ordered_slices
+
+            pay_command = [
+                "#pay",
+                "#blik TELEPHONE_NUMBER",
+                "#acc_number ACCOUNT_NUMBER",
+                "#acc_name {}".format(message.user.name),
+                "#title Pizza"
+            ]
+
+            for order in self._orders:
+                skype_id = "me" if order[0].id == message.userId else order[0].id
+                amount = math.ceil(order[1] * slice_cost) / 100
+                pay_command.append("@{} {}".format(skype_id, amount))
+
+            self._skype.contacts[message.userId].chat.sendMsg("\n".join(pay_command))
+
+        self._orders = []
+        self._started_by = None
+        self._is_stopped = False
 
     def _handle_number_of_slices(self, message, command):
         if not self._started_by or self._is_stopped:
