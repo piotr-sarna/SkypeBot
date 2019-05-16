@@ -12,7 +12,7 @@ class Command:
 
     def _set_number_of_slices(self, value):
         if value:
-            self.number_of_slices = int(value)
+            self.number_of_slices = abs(int(value))
 
     def _set_start(self, value):
         self.start = True
