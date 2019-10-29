@@ -204,8 +204,8 @@ Slice(s) missing for the next #pizza: {missing_slices}
            user_id=self._started_by.id,
            number_of_pizzas=number_of_pizzas,
            missing_slices=missing_slices,
-           orders_summaries="\n".join(orders_summaries),
-           overflow_summaries="\n".join(overflow_summaries),
+           orders_summaries="\n".join(orders_summaries) if len(orders_summaries) else "¯\_(ツ)_/¯",
+           overflow_summaries="\n".join(overflow_summaries) if len(overflow_summaries) else "¯\_(ツ)_/¯",
            )
 
         message.chat.sendMsg(chat_message)
