@@ -10,7 +10,6 @@ class PizzaPlugin(PluginBase):
         super(PizzaPlugin, self).__init__(skype=skype)
         self._orders = []
         self._started_by = None
-        self._is_stopped = False
         self._NUMBER_OF_PIZZA_SLICES = 8
 
     def friendly_name(self):
@@ -38,8 +37,6 @@ class PizzaPlugin(PluginBase):
             self._handle_start(message=message, command=command)
         elif command.stop:
             self._handle_stop(message=message, command=command)
-        elif command.cost is not None:
-            self._handle_cost(message=message, command=command)
         elif command.number_of_slices is not None:
             self._handle_number_of_slices(message=message, command=command)
 
@@ -51,7 +48,6 @@ Commands:
     #help
     #start
     #stop
-    #cost
     NUMBER_OF_SLICES
 """.format(friendly_name=self.friendly_name(),
            version=self.version(),
@@ -69,7 +65,6 @@ Commands:
         commands_number = 0
         commands_number += 1 if command.start else 0
         commands_number += 1 if command.stop else 0
-        commands_number += 1 if command.cost is not None else 0
         commands_number += 1 if command.number_of_slices is not None else 0
 
         if commands_number != 1:
@@ -81,11 +76,12 @@ Commands:
 
         self._orders = []
         self._started_by = message.user
-        self._is_stopped = False
 
         self._skype.contacts[message.user.id].chat.sendMsg(
             "You've started #pizza at {time} UTC. Please remember to #pizza #stop".format(time=str(message.time.replace(microsecond=0)))
         )
+
+        message.chat.sendMsg("#pizza started by {user_name} ({user_id})".format(user_name=self._started_by.name, user_id=self._started_by.id))
 
     def _handle_stop(self, message, command):
         if not self._started_by:
@@ -93,11 +89,6 @@ Commands:
 
         if self._started_by.id != message.userId:
             raise Exception("Only user which started #pizza can stop it")
-
-        if self._is_stopped:
-            raise Exception("#pizza is already stopped")
-
-        self._is_stopped = True
 
         final_order = list(self._orders)
         total_ordered_slices = sum(order[1] for order in final_order)
@@ -110,24 +101,23 @@ Commands:
                     final_order.pop(idx)
                     slices_overflow -= order[1]
                     self._skype.contacts[order[0].id].chat.sendMsg(
-                        "Sorry, you were removed from #pizza order, because of rounding to whole pizzas :("
+                        "Sorry, you were removed from #pizza order, because of rounding to whole #pizza(s) :("
                     )
                 else:
                     new_slices = final_order[idx][1] - slices_overflow
                     final_order[idx] = (final_order[idx][0], new_slices)
                     slices_overflow = 0
                     self._skype.contacts[order[0].id].chat.sendMsg(
-                        "Sorry, your #pizza order was reduced to {slices} slice(s), because of rounding to whole pizzas :(".format(slices=new_slices)
+                        "Sorry, your #pizza order was reduced to {slices} slice(s), because of rounding to whole #pizza(s) :(".format(slices=new_slices)
                     )
 
                 if not slices_overflow:
                     break
 
-        self._orders = final_order
-        orders_summaries = ["{user_name} ({user_id}) - {slices}".format(user_name=order[0].name, user_id=order[0].id, slices=order[1]) for order in self._orders]
+        orders_summaries = ["{user_name} ({user_id}) - {slices}".format(user_name=order[0].name, user_id=order[0].id, slices=order[1]) for order in final_order]
 
         self._skype.contacts[message.userId].chat.sendMsg(
-            """You've stopped #pizza at {time} UTC. Please remember to #pizza #cost
+            """You've stopped #pizza at {time} UTC.
             
 Summary:
 Pizzas to order: {pizzas}
@@ -137,38 +127,18 @@ Pizzas to order: {pizzas}
            orders_summaries="\n".join(orders_summaries))
         )
 
-    def _handle_cost(self, message, command):
-        if not self._started_by:
-            raise Exception("No #pizza is currently started")
-
-        if self._started_by.id != message.userId:
-            raise Exception("Only user which started #pizza can 'cost' it")
-
-        total_ordered_slices = sum(order[1] for order in self._orders)
-        if total_ordered_slices:
-            slice_cost = command.cost / total_ordered_slices
-
-            pay_command = [
-                "#pay",
-                "#blik TELEPHONE_NUMBER",
-                "#acc_number ACCOUNT_NUMBER",
-                "#acc_name {}".format(message.user.name),
-                "#title Pizza"
-            ]
-
-            for order in self._orders:
-                skype_id = "me" if order[0].id == message.userId else order[0].id
-                amount = math.ceil(order[1] * slice_cost) / 100
-                pay_command.append("@{} {}".format(skype_id, amount))
-
-            self._skype.contacts[message.userId].chat.sendMsg("\n".join(pay_command))
+        message.chat.sendMsg("""Summary for #pizza started by {user_name} ({user_id}):
+Pizzas to order: {pizzas}
+{orders_summaries}""".format(
+           user_name=self._started_by.name, user_id=self._started_by.id,
+           pizzas=number_of_pizzas,
+           orders_summaries="\n".join(orders_summaries)))
 
         self._orders = []
         self._started_by = None
-        self._is_stopped = False
 
     def _handle_number_of_slices(self, message, command):
-        if not self._started_by or self._is_stopped:
+        if not self._started_by:
             raise Exception("No #pizza is currently started")
 
         existing_idx = [idx for idx, order in enumerate(self._orders) if order[0].id == message.userId]
@@ -176,9 +146,12 @@ Pizzas to order: {pizzas}
         if existing_idx:
             self._orders.pop(existing_idx[0])
 
-        self._orders.append((message.user, command.number_of_slices))
+        if command.number_of_slices > 0:
+            self._orders.append((message.user, command.number_of_slices))
+
         total_ordered_slices = sum(order[1] for order in self._orders)
         missing_slices = self._NUMBER_OF_PIZZA_SLICES - total_ordered_slices % self._NUMBER_OF_PIZZA_SLICES
+        pizzas_to_order = total_ordered_slices // self._NUMBER_OF_PIZZA_SLICES
 
         self._skype.contacts[message.userId].chat.sendMsg("You've registered for {no_slices} #pizza slice(s)".format(no_slices=command.number_of_slices))
-        message.chat.sendMsg("{missing_slices} slice(s) are missing for the next #pizza".format(missing_slices=missing_slices))
+        message.chat.sendMsg("{pizzas_to_order} #pizza(s) to order, {missing_slices} slice(s) are missing for the next #pizza".format(pizzas_to_order=pizzas_to_order, missing_slices=missing_slices))

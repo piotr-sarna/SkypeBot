@@ -5,14 +5,23 @@ class Command:
         self.number_of_slices = None
         self.start = False
         self.stop = False
-        self.cost = None
 
     def _set_help(self, value):
         self.help = True
 
     def _set_number_of_slices(self, value):
-        if value:
-            self.number_of_slices = abs(int(value))
+        if not value:
+            return
+
+        try:
+            value = int(value)
+
+            if value < 0:
+                raise ValueError("negative value")
+        except ValueError as ex:
+            raise ValueError("Number must be a positive integer. Inner reason: \"" + str(ex) + "\"")
+
+        self.number_of_slices = value
 
     def _set_start(self, value):
         self.start = True
@@ -20,16 +29,12 @@ class Command:
     def _set_stop(self, value):
         self.stop = True
 
-    def _set_cost(self, value):
-        self.cost = int(float(value.replace(',', '.'))*100)
-
     def _known_commands(self):
         return {
             "#help": self._set_help,
             "#pizza": self._set_number_of_slices,
             "#start": self._set_start,
             "#stop": self._set_stop,
-            "#cost": self._set_cost,
         }
 
     def _prepare_message(self, message):
@@ -57,15 +62,6 @@ class Command:
                     value = line[len(command):].strip()
                     resolver(value=value)
                     break
-
-    @staticmethod
-    def _parse_order_cost(line):
-        split_line = line.split(" ", 1)
-        user_id = split_line[0].strip()[1:]
-        amount = split_line[1].strip().replace(',', '.')
-        amount = int(float(amount) * 100)
-
-        return user_id, amount
 
     @classmethod
     def parse(cls, message):
