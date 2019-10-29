@@ -134,6 +134,7 @@ Summary:
 
         message.chat.sendMsg("""Summary for #pizza started by {user_name} ({user_id}):
 #pizza(s) to order: {pizzas}
+
 {orders_summaries}""".format(
            user_name=self._started_by.name, user_id=self._started_by.id,
            pizzas=number_of_pizzas,
