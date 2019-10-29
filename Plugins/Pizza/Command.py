@@ -5,6 +5,7 @@ class Command:
         self.number_of_slices = None
         self.start = False
         self.stop = False
+        self.status = False
 
     def _set_help(self, value):
         self.help = True
@@ -29,12 +30,16 @@ class Command:
     def _set_stop(self, value):
         self.stop = True
 
+    def _set_status(self, value):
+        self.status = True
+
     def _known_commands(self):
         return {
             "#help": self._set_help,
             "#pizza": self._set_number_of_slices,
             "#start": self._set_start,
             "#stop": self._set_stop,
+            "#status": self._set_status,
         }
 
     def _prepare_message(self, message):
