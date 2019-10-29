@@ -40,7 +40,7 @@ class PizzaPlugin(PluginBase):
             self._handle_stop(message=message, command=command)
         elif command.cost is not None:
             self._handle_cost(message=message, command=command)
-        elif command.number_of_slices:
+        elif command.number_of_slices is not None:
             self._handle_number_of_slices(message=message, command=command)
 
     def help_message(self):
@@ -70,7 +70,7 @@ Commands:
         commands_number += 1 if command.start else 0
         commands_number += 1 if command.stop else 0
         commands_number += 1 if command.cost is not None else 0
-        commands_number += 1 if command.number_of_slices else 0
+        commands_number += 1 if command.number_of_slices is not None else 0
 
         if commands_number != 1:
             raise Exception("You have to specify exactly one command at once")
