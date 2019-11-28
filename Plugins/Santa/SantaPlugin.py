@@ -1,0 +1,152 @@
+from skpy import SkypeNewMessageEvent, SkypeEditMessageEvent
+from numpy import random
+
+from Core.PluginBase import PluginBase
+from .Command import Command
+
+
+class SantaPlugin(PluginBase):
+    def __init__(self, skype):
+        super(SantaPlugin, self).__init__(skype=skype)
+        self._participants = []
+        self._started_by = None
+
+    def friendly_name(self):
+        return 'Santa plugin'
+
+    def version(self):
+        return '0.1'
+
+    def keywords(self):
+        return ['santa']
+
+    def handle(self, event):
+        if not isinstance(event, SkypeNewMessageEvent) and not isinstance(event, SkypeEditMessageEvent):
+            return
+
+        message = event.msg
+        command = Command.parse(message=message.markup)
+
+        if self._process_if_help_command(message=message, command=command):
+            return
+
+        if command.start:
+            self._handle_start(message=message, command=command)
+        elif command.stop:
+            self._handle_stop(message=message, command=command)
+        elif command.participate:
+            self._handle_participate(message=message, command=command)
+        elif command.status:
+            self._handle_status(message=message, command=command)
+
+    def help_message(self):
+        return """{friendly_name} v{version}
+           
+Keywords: {keywords}
+Commands:
+    #help
+    #start
+    #bylemgrzeczny
+    #stop
+    #status
+""".format(friendly_name=self.friendly_name(),
+           version=self.version(),
+           keywords=','.join(['#' + keyword for keyword in self.keywords()])
+           )
+
+    def _process_if_help_command(self, message, command):
+        if command.help:
+            self._skype.contacts[message.userId].chat.sendMsg(self.help_message())
+
+        return command.help
+
+    def _handle_start(self, message, command):
+        if self._started_by:
+            raise Exception("Aekhem, there's only one Santa! \n"
+                            "Exactly one #santa can be started at the same time")
+
+        self._participants = []
+        self._started_by = message.user
+
+        self._skype.contacts[message.user.id].chat.sendMsg(
+            "You've started #santa {time} UTC. Please remember to #santa #stop".format(time=str(message.time.replace(
+                microsecond=0)))
+        )
+
+        message.chat.sendMsg("#santa started by {user_name} ({user_id})".format(user_name=self._started_by.name,
+                                                                                user_id=self._started_by.id))
+
+    def _handle_stop(self, message, command):
+        if not self._started_by:
+            raise Exception("No #santa is currently started")
+
+        if self._started_by.id != message.userId:
+            raise Exception("Only user who started #santa can stop it")
+
+        participants = list(self._participants)
+        total_participants = len(participants)
+        participants_summary = ["{user_name} ({user_id})".format(user_name=participant.name,
+                                                                user_id=participant.id)
+                               for participant in participants]
+        print(participants_summary)
+
+        # start draw
+        send_message_to = participants
+
+        # for user in send_message_to:
+
+        existing_idx = [idx for idx, participant in enumerate(self._participants) if participant.id == message.userId]
+
+        if existing_idx:
+            self._participants.pop(existing_idx[0])
+
+        participants = list(self._participants)
+        draw_result = random.choice(participants)
+
+        chosen_participant = "{user_name} ({user_id})".format(user_name=draw_result.name,
+                                                              user_id=draw_result.id)
+        print(chosen_participant)
+        print(participants)
+        #end draw
+
+        self._participants = []
+        self._started_by = None
+
+        self._skype.contacts[message.userId].chat.sendMsg(
+            """You've stopped #santa at {time} UTC,
+            
+Summary:
+Total participants: {total_participants}
+
+Participants list:
+{participants_list}
+""".format(time=str(message.time.replace(microsecond=0)),
+            total_participants=total_participants,
+            participants_list="\n".join(participants_summary))
+        )
+
+        message.chat.sendMsg(
+        """Summary:
+Total participants: {total_participants}
+
+Participants list:
+{participants_list}
+        """.format(time=str(message.time.replace(microsecond=0)),
+                    total_participants=total_participants,
+                    participants_list="\n".join(participants_summary))
+        )
+
+    def _handle_participate(self, message, command):
+        if not self._started_by:
+            raise Exception("No #santa is currently started")
+
+        existing_idx = [idx for idx, participant in enumerate(self._participants) if participant.id == message.userId]
+
+        if existing_idx:
+            self._participants.pop(existing_idx[0])
+
+        if command.participate:
+            self._participants.append(message.user)
+
+        self._skype.contacts[message.userId].chat.sendMsg("You're on #santa's list now!")
+
