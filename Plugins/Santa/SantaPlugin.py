@@ -96,23 +96,19 @@ Commands:
                                for participant in self._participants]
 
         # start draw
-        send_message_to = participants
+        draw_participants = []
 
-        # for user in send_message_to:
+        for participant in self._participants:
+            draw_participants.append(self._participants[participant].id)
 
-        existing_idx = [idx for idx, participant in enumerate(self._participants) if participant.id == message.userId]
+        participants = draw_participants[:]
 
-        if existing_idx:
-            self._participants.pop(existing_idx[0])
+        random.shuffle(draw_participants)
+        
+        while not check_if_correctly_shuffled(participants, draw_participants):
+            random.shuffle(draw_participants)
 
-        participants = list(self._participants)
-        draw_result = random.choice(participants)
-
-        chosen_participant = "{user_name} ({user_id})".format(user_name=draw_result.name,
-                                                              user_id=draw_result.id)
-        print(chosen_participant)
-        print(participants)
-        #end draw
+        draw_results = {}
 
         self._participants = []
         self._started_by = None
