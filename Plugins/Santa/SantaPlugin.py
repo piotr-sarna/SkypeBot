@@ -152,13 +152,11 @@ Participants list:
         if not self._started_by:
             raise Exception("No #santa is currently started")
 
-        existing_idx = [idx for idx, participant in enumerate(self._participants) if participant.id == message.userId]
-
-        if existing_idx:
-            self._participants.pop(existing_idx[0])
+        if message.userId in self._participants.keys():
+            del self._participants[message.userId]
 
         if command.participate:
-            self._participants.append(message.user)
+            self._participants[message.userId] = message.user
 
         self._skype.contacts[message.userId].chat.sendMsg("You're on #santa's list now!")
 
