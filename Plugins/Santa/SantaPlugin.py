@@ -110,12 +110,12 @@ Commands:
 
         draw_results = {}
 
-        self._participants = []
-        self._started_by = None
+        for i in range(len(participants)):
+            draw_results[participants[i]] = draw_participants[i]
 
         self._skype.contacts[message.userId].chat.sendMsg(
             """You've stopped #santa at {time} UTC,
-            
+
 Summary:
 Total participants: {total_participants}
 
@@ -127,7 +127,7 @@ Participants list:
         )
 
         message.chat.sendMsg(
-        """Summary:
+"""Summary:
 Total participants: {total_participants}
 
 Participants list:
@@ -136,6 +136,17 @@ Participants list:
                     total_participants=total_participants,
                     participants_list="\n".join(participants_summary))
         )
+
+        for participant in draw_results:
+            self._skype.contacts[participant].chat.sendMsg(
+"""Your draw is: {user_name} ({user_id}).
+""".format(time=str(message.time.replace(microsecond=0)),
+            user_name=self._participants[draw_results[participant]].name,
+            user_id=draw_results[participant])
+            )
+
+        self._participants = {}
+        self._started_by = None
 
     def _handle_participate(self, message, command):
         if not self._started_by:
