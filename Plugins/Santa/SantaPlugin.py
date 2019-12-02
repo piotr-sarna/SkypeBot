@@ -16,7 +16,7 @@ def check_if_correctly_shuffled(participants, draw_participants):
 class SantaPlugin(PluginBase):
     def __init__(self, skype):
         super(SantaPlugin, self).__init__(skype=skype)
-        self._participants = []
+        self._participants = {}
         self._started_by = None
 
     def friendly_name(self):
@@ -73,7 +73,6 @@ Commands:
             raise Exception("Aekhem, there's only one Santa! \n"
                             "Exactly one #santa can be started at the same time")
 
-        self._participants = []
         self._started_by = message.user
 
         self._skype.contacts[message.user.id].chat.sendMsg(
@@ -91,12 +90,10 @@ Commands:
         if self._started_by.id != message.userId:
             raise Exception("Only user who started #santa can stop it")
 
-        participants = list(self._participants)
-        total_participants = len(participants)
-        participants_summary = ["{user_name} ({user_id})".format(user_name=participant.name,
-                                                                user_id=participant.id)
-                               for participant in participants]
-        print(participants_summary)
+        total_participants = len(self._participants)
+        participants_summary = ["{user_name} ({user_id})".format(user_name=self._participants[participant].name,
+                                                                user_id=self._participants[participant].id)
+                               for participant in self._participants]
 
         # start draw
         send_message_to = participants
