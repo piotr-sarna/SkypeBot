@@ -160,3 +160,17 @@ Participants list:
 
         self._skype.contacts[message.userId].chat.sendMsg("You're on #santa's list now!")
 
+    def _handle_status(self, message, command):
+        total_participants = len(self._participants)
+        participants_summary = ["{user_name} ({user_id})".format(user_name=self._participants[participant].name,
+                                                                user_id=self._participants[participant].id)
+                               for participant in self._participants]
+
+        message.chat.sendMsg(
+"""Total participants now: {total_participants}.
+Current participants list:
+{participants_list}
+""".format(time=str(message.time.replace(microsecond=0)),
+            total_participants=total_participants,
+            participants_list="\n".join(participants_summary))
+        )
