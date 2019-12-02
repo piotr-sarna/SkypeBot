@@ -82,6 +82,7 @@ Commands:
 
         message.chat.sendMsg("#santa started by {user_name} ({user_id})".format(user_name=self._started_by.name,
                                                                                 user_id=self._started_by.id))
+        message.chat.sendMsg(self.help_message());
 
     def _handle_stop(self, message, command):
         if not self._started_by:
