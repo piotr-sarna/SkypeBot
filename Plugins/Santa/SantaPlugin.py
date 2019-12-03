@@ -54,7 +54,7 @@ Keywords: {keywords}
 Commands:
     #help
     #start
-    #bylemgrzeczny
+    #iwasgoodthisyear
     #stop
     #status
 """.format(friendly_name=self.friendly_name(),

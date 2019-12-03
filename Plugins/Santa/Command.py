@@ -24,7 +24,7 @@ class Command:
     def _known_commands(self):
         return {
             "#help": self._set_help,
-            "#bylemgrzeczny": self._set_participate,
+            "#iwasgoodthisyear": self._set_participate,
             "#start": self._set_start,
             "#stop": self._set_stop,
             "#status": self._set_status,
