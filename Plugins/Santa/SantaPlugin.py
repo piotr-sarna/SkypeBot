@@ -6,7 +6,6 @@ from .Command import Command
 
 
 def check_if_correctly_shuffled(participants, draw_participants):
-
     for i in range(len(participants)):
         if participants[i] == draw_participants[i]:
             return False
