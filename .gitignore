@@ -107,4 +107,4 @@ venv.bak/
 *.env
 
 #PyCharm
-.idea/workspace.xml
+.idea
