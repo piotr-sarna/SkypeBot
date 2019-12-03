@@ -113,6 +113,10 @@ Commands:
         for i in range(len(participants)):
             draw_results[participants[i]] = draw_participants[i]
 
+        draw_summary = ["{participant} : {draw}".format(participant=participant,
+                                                        draw=draw_results[participant])
+                        for participant in draw_results]
+
         self._skype.contacts[message.userId].chat.sendMsg(
             """You've stopped #santa at {time} UTC,
 
@@ -144,6 +148,12 @@ Participants list:
             user_name=self._participants[draw_results[participant]].name,
             user_id=draw_results[participant])
             )
+
+        self._skype.contacts[message.userId].chat.sendMsg(
+"""Draw results:
+{draw_summary}
+""".format(draw_summary="\n".join(draw_summary))
+        )
 
         self._participants = {}
         self._started_by = None
