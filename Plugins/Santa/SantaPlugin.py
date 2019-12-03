@@ -133,7 +133,7 @@ Total participants: {total_participants}
 
 Participants list:
 {participants_list}
-        """.format(time=str(message.time.replace(microsecond=0)),
+        """.format(
                     total_participants=total_participants,
                     participants_list="\n".join(participants_summary))
         )
@@ -141,7 +141,7 @@ Participants list:
         for participant in draw_results:
             self._skype.contacts[participant].chat.sendMsg(
 """Your draw is: {user_name} ({user_id}).
-""".format(time=str(message.time.replace(microsecond=0)),
+""".format(
             user_name=self._participants[draw_results[participant]].name,
             user_id=draw_results[participant])
             )
@@ -171,7 +171,7 @@ Participants list:
 """Total participants now: {total_participants}.
 Current participants list:
 {participants_list}
-""".format(time=str(message.time.replace(microsecond=0)),
+""".format(
             total_participants=total_participants,
             participants_list="\n".join(participants_summary))
         )
