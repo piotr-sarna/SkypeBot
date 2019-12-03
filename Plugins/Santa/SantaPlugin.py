@@ -1,5 +1,5 @@
 from skpy import SkypeNewMessageEvent, SkypeEditMessageEvent
-from numpy import random
+import random
 
 from Core.PluginBase import PluginBase
 from .Command import Command
