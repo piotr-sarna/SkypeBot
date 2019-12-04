@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 from Core.PluginsLoader import PluginsLoader
 from Core.SkypeListener import SkypeListener
 
@@ -12,7 +13,14 @@ if __name__ == '__main__':
         exit(-1)
 
     plugins = PluginsLoader().load()
-    skype = SkypeListener(username=username, password=password, token_file=token_file, plugins=plugins)
 
-    skype.setPresence()
-    skype.loop()
+    while True:
+        try:
+            skype = SkypeListener(username=username, password=password, token_file=token_file, plugins=plugins)
+
+            skype.setPresence()
+            print("SkypeBot started at " + str(datetime.now()))
+            skype.loop()
+        except Exception as e:
+            print("Exception raised at" + str(datetime.now()))
+            print(e)
