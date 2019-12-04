@@ -5,13 +5,14 @@ from Core.SkypeListener import SkypeListener
 if __name__ == '__main__':
     username = os.environ.get('SKYPE_BOT_USERNAME', None)
     password = os.environ.get('SKYPE_BOT_PASSWORD', None)
+    token_file = os.environ.get('SKYPE_BOT_TOKEN_FILE', os.path.join(os.getcwd(), 'token.txt'))
 
-    if username is None or password is None:
-        print('You must define following environment variables: SKYPE_BOT_USERNAME and SKYPE_BOT_PASSWORD')
+    if username is None or password is None or token_file is None:
+        print('You must define following environment variables: SKYPE_BOT_USERNAME, SKYPE_BOT_PASSWORD')
         exit(-1)
 
     plugins = PluginsLoader().load()
-    skype = SkypeListener(username=username, password=password, plugins=plugins)
+    skype = SkypeListener(username=username, password=password, token_file=token_file, plugins=plugins)
 
     skype.setPresence()
     skype.loop()

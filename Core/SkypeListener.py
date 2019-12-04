@@ -2,8 +2,8 @@ from skpy import SkypeEventLoop, SkypeMessageEvent, SkypeEditMessageEvent
 
 
 class SkypeListener(SkypeEventLoop):
-    def __init__(self, username, password, plugins):
-        super(SkypeListener, self).__init__(username, password)
+    def __init__(self, username, password, token_file, plugins):
+        super(SkypeListener, self).__init__(user=username, pwd=password, tokenFile=token_file)
 
         self._handlers = self._prepare_handlers(plugins=plugins)
 
