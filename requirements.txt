@@ -1,3 +1,4 @@
 qrcode>=6.1
 skpy>=0.9.1
 image>=1.5.27
+tinydb>=3.15.2
