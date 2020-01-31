@@ -28,7 +28,7 @@ if __name__ == '__main__':
         try:
             skype = SkypeClient(username=username, password=password, token_file=token_file, plugins=plugins)
 
-            # skype.setPresence()
+            skype.setPresence()
             logger.info("SkypeBot started")
             skype.loop()
         except SkypeAuthException as ex:
