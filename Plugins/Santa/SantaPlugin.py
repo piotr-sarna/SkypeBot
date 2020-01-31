@@ -13,8 +13,8 @@ def check_if_correctly_shuffled(participants, draw_participants):
 
 
 class SantaPlugin(PluginBase):
-    def __init__(self):
-        super(SantaPlugin, self).__init__()
+    def __init__(self, client, database):
+        super(SantaPlugin, self).__init__(client=client, database=database)
         self._participants = {}
         self._started_by = None
 

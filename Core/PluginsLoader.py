@@ -45,7 +45,7 @@ class PluginsLoader:
         keywords = []
 
         for plugin in plugins:
-            keywords.extend([keyword.lower() for keyword in plugin.keywords()])
+            keywords.extend([keyword.lower() for keyword in plugin.keywords(None)])
 
         unique_keywords = list(set(keywords))
 
@@ -55,8 +55,8 @@ class PluginsLoader:
 
     @staticmethod
     def load():
-        plugins = [plugin() for plugin in PluginsLoader.__read_plugins_namespace()]
+        plugins_types = [plugin_type for plugin_type in PluginsLoader.__read_plugins_namespace()]
 
-        PluginsLoader.__validate_keywords_unique(plugins)
+        PluginsLoader.__validate_keywords_unique(plugins_types)
 
-        return plugins
+        return plugins_types

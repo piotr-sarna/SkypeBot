@@ -1,22 +1,20 @@
 import logging
-from typing import List
 
 from skpy import SkypeEventLoop, SkypeMessageEvent, SkypeEditMessageEvent, SkypeConnection
-
-from Core.PluginBase import PluginBase
 
 logger = logging.getLogger(__name__)
 
 
 class SkypeClient(SkypeEventLoop):
-    def __init__(self, username: str, password: str, token_file: str, plugins: List[PluginBase]):
+    def __init__(self, username: str, password: str, token_file: str):
         super(SkypeClient, self).__init__(user=username, pwd=password, tokenFile=token_file)
 
-        self.__add_client_to_plugins(plugins=plugins)
-
-        self._handlers = dict(self.__generate_handlers(plugins=plugins))
+        self._handlers = None
         self.__current_event = None
         self.__current_handler = None
+
+    def register_plugins(self, plugins):
+        self._handlers = dict(self.__generate_handlers(plugins=plugins))
 
     def onEvent(self, event):
         is_message_event = isinstance(event, SkypeMessageEvent)
@@ -63,12 +61,8 @@ class SkypeClient(SkypeEventLoop):
         self.send_direct_response(message)
         logger.warning(message)
 
-    def __add_client_to_plugins(self, plugins: List[PluginBase]):
-        for plugin in plugins:
-            plugin.set_client(self)
-
     @staticmethod
-    def __generate_handlers(plugins: List[PluginBase]):
+    def __generate_handlers(plugins):
         for plugin in plugins:
             for keyword in plugin.keywords():
                 yield (keyword.lower(), plugin)

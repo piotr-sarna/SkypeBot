@@ -8,8 +8,8 @@ SLICES_IN_PIZZA = 8
 
 
 class PizzaPlugin(PluginBase):
-    def __init__(self):
-        super(PizzaPlugin, self).__init__()
+    def __init__(self, client, database):
+        super(PizzaPlugin, self).__init__(client=client, database=database)
         self._orders = []
         self._started_by = None
 
