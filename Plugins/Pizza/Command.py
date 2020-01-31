@@ -68,6 +68,18 @@ class Command:
                     resolver(value=value)
                     break
 
+    def _validate(self):
+        commands_number = 0
+        commands_number += 1 if self.start else 0
+        commands_number += 1 if self.stop else 0
+        commands_number += 1 if self.number_of_slices is not None else 0
+        commands_number += 1 if self.status else 0
+
+        if commands_number == 0:
+            self.help = True
+        elif commands_number != 1:
+            raise Exception("You have to specify exactly one command at once")
+
     @classmethod
     def parse(cls, message):
         result = Command()
@@ -75,5 +87,6 @@ class Command:
         message = result._prepare_message(message=message)
 
         result._parse_known_commands(message=message)
+        result._validate()
 
         return result

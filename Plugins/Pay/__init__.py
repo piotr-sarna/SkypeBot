@@ -1,1 +1,0 @@
-from .PayPlugin import PayPlugin

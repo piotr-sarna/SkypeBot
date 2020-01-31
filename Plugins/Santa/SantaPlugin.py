@@ -13,8 +13,8 @@ def check_if_correctly_shuffled(participants, draw_participants):
 
 
 class SantaPlugin(PluginBase):
-    def __init__(self, skype):
-        super(SantaPlugin, self).__init__(skype=skype)
+    def __init__(self):
+        super(SantaPlugin, self).__init__()
         self._participants = {}
         self._started_by = None
 
@@ -63,7 +63,7 @@ Commands:
 
     def _process_if_help_command(self, message, command):
         if command.help:
-            self._skype.contacts[message.userId].chat.sendMsg(self.help_message())
+            self._client.send_direct_response(self.help_message())
 
         return command.help
 
@@ -74,14 +74,14 @@ Commands:
 
         self._started_by = message.user
 
-        self._skype.contacts[message.user.id].chat.sendMsg(
+        self._client.send_direct_response(
             "You've started #santa {time} UTC. Please remember to #santa #stop".format(time=str(message.time.replace(
                 microsecond=0)))
         )
 
-        message.chat.sendMsg("#santa started by {user_name} ({user_id})".format(user_name=self._started_by.name,
+        self._client.send_group_response("#santa started by {user_name} ({user_id})".format(user_name=self._started_by.name,
                                                                                 user_id=self._started_by.id))
-        message.chat.sendMsg(self.help_message());
+        self._client.send_group_response(self.help_message())
 
     def _handle_stop(self, message, command):
         if not self._started_by:
@@ -105,7 +105,7 @@ Commands:
 
         random.shuffle(draw_participants)
         
-        while not check_if_correctly_shuffled(participants, draw_participants):
+        while len(draw_participants) > 1 and not check_if_correctly_shuffled(participants, draw_participants):
             random.shuffle(draw_participants)
 
         draw_results = {}
@@ -117,7 +117,7 @@ Commands:
                                                         draw=draw_results[participant])
                         for participant in draw_results]
 
-        self._skype.contacts[message.userId].chat.sendMsg(
+        self._client.send_direct_response(
             """You've stopped #santa at {time} UTC,
 
 Summary:
@@ -130,7 +130,7 @@ Participants list:
             participants_list="\n".join(participants_summary))
         )
 
-        message.chat.sendMsg(
+        self._client.send_group_response(
 """Summary:
 Total participants: {total_participants}
 
@@ -142,14 +142,14 @@ Participants list:
         )
 
         for participant in draw_results:
-            self._skype.contacts[participant].chat.sendMsg(
+            self._client.send_direct_message(participant,
 """Your draw is: {user_name} ({user_id}).
 """.format(
             user_name=self._participants[draw_results[participant]].name,
             user_id=draw_results[participant])
             )
 
-        self._skype.contacts[message.userId].chat.sendMsg(
+        self._client.send_direct_response(
 """Draw results:
 {draw_summary}
 """.format(draw_summary="\n".join(draw_summary))
@@ -168,7 +168,7 @@ Participants list:
         if command.participate:
             self._participants[message.userId] = message.user
 
-        self._skype.contacts[message.userId].chat.sendMsg("You're on #santa's list now!")
+            self._client.send_direct_response("You're on #santa's list now!")
 
     def _handle_status(self, message, command):
         total_participants = len(self._participants)
@@ -176,7 +176,7 @@ Participants list:
                                                                 user_id=self._participants[participant].id)
                                for participant in self._participants]
 
-        message.chat.sendMsg(
+        self._client.send_group_response(
 """Total participants now: {total_participants}.
 Current participants list:
 {participants_list}
