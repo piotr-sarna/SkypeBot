@@ -1,4 +1,8 @@
-from skpy import SkypeEventLoop, SkypeMessageEvent, SkypeEditMessageEvent
+import logging
+
+from skpy import SkypeEventLoop, SkypeMessageEvent, SkypeEditMessageEvent, SkypeConnection
+
+logger = logging.getLogger(__name__)
 
 
 class SkypeListener(SkypeEventLoop):
@@ -13,6 +17,11 @@ class SkypeListener(SkypeEventLoop):
 
         if is_message_event and not is_bots_message:
             self._process_message_event(event=event)
+
+    def loop(self):
+        while True:
+            self.conn.verifyToken(SkypeConnection.Auth.SkypeToken)
+            self.cycle()
 
     def _process_message_event(self, event):
         keyword, is_single_command = self._get_keyword(event=event)
@@ -48,7 +57,7 @@ class SkypeListener(SkypeEventLoop):
                 keyword = keyword.lower()
 
                 if keyword in result:
-                    print('Plugins\' keywords conflict for \'' + keyword + '\'')
+                    logger.critical("Plugins\' keywords conflict. Keyword: %s", keyword)
                     exit(-1)
 
                 result[keyword] = plugin

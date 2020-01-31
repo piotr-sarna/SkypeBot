@@ -1,10 +1,13 @@
 import inspect
 import importlib
 import pkgutil
+import logging
 
 import Plugins
 
 from .PluginBase import PluginBase
+
+logger = logging.getLogger(__name__)
 
 
 class PluginsLoader:
@@ -26,13 +29,13 @@ class PluginsLoader:
             plugin_classes = inspect.getmembers(module, inspect.isclass)
 
             if len(plugin_classes) != 1:
-                print('\'' + name + '\': plugin module must import exactly one class')
+                logger.warning("Plugin module must import exactly one class. Module name: '%s'", name)
                 continue
 
             plugin_class = plugin_classes[0][1]
 
             if not issubclass(plugin_class, PluginBase):
-                print('\'' + name + '\': plugin class must inherit from IBotPlugin')
+                logger.warning("Plugin class must inherit from IBotPlugin. Module name: '%s'", name)
                 continue
 
             result.append(plugin_class)
