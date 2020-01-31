@@ -12,7 +12,7 @@ class PluginBase:
     def __init__(self, client: SkypeClient, database: TinyDB):
         self._client = client
         self.__database = database
-        self._database = database.table(self.__table_name())
+        self._data_table = database.table(self.__table_name())
 
     def __table_name(self):
         table_name = "{friendly_name}-{version}".format(friendly_name=self.friendly_name(), version=self.version())
