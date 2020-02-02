@@ -4,9 +4,11 @@ from collections import namedtuple
 from typing import List
 
 from tinydb import TinyDB
+from tinydb_serialization import SerializationMiddleware
 
 from Core.PluginBase import PluginBase
 from Core.PluginsLoader import PluginsLoader
+from Core.Serializers.DateTimeSerializer import DateTimeSerializer
 from Core.SkypeClient import SkypeClient
 
 logging.basicConfig(
@@ -33,9 +35,24 @@ def read_environment() -> Environment:
     return Environment(username, password, token_file, database_file)
 
 
+def serialization_config() -> SerializationMiddleware:
+    serializers = [
+        DateTimeSerializer
+    ]
+
+    middleware = SerializationMiddleware()
+
+    for serializer in serializers:
+        logger.debug("Registering serializer '%s' for type '%s'...", serializer.__name__, serializer.OBJ_CLASS.__name__)
+        middleware.register_serializer(serializer, serializer.__name__)
+        logger.debug("Serializer '%s' registered", serializer.__name__)
+
+    return middleware
+
+
 def init_database(env: Environment) -> TinyDB:
     logger.debug("Initializing TinyDB...")
-    db = TinyDB(env.database_file)
+    db = TinyDB(env.database_file, storage=serialization_config())
     logger.info("TinyDB initialized at path %s", env.database_file)
     return db
 
