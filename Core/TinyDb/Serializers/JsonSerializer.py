@@ -7,7 +7,7 @@ from tinydb_serialization import Serializer
 class JsonSerializer(Serializer, ABC):
     @property
     @abstractmethod
-    def OBJ_CLASS(self):
+    def OBJ_CLASS(self) -> type:
         pass
 
     def encode(self, obj):

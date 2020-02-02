@@ -8,13 +8,19 @@ from tinydb.database import Document
 
 class ModelBase(Mapping, ABC):
     def __getitem__(self, k):
-        return self.__dict__.__getitem__(k)
+        return self.__serializer_dict().__getitem__(k)
 
     def __iter__(self):
-        return self.__dict__.__iter__()
+        return self.__serializer_dict().__iter__()
 
     def __len__(self):
-        return self.__dict__.__len__()
+        return self.__serializer_dict().__len__()
+
+    def __serializer_dict(self) -> dict:
+        all_properties = dict(self.__dict__)
+        if 'doc_id' in all_properties:
+            del all_properties['doc_id']
+        return all_properties
 
     def __init__(self):
         super(ModelBase, self).__init__()
@@ -25,7 +31,7 @@ class ModelBase(Mapping, ABC):
         self.user_id = None
         self.user_name = None
 
-    def in_context(self, user: SkypeUser, chat: SkypeChat):
+    def with_context(self, user: SkypeUser, chat: SkypeChat):
         self.chat_id = chat.id
         self.user_id = user.id
         self.user_name = user.name

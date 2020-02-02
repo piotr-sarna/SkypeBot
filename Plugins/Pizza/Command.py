@@ -1,3 +1,12 @@
+from skpy import SkypeMsg
+
+from Plugins.Pizza import PizzaPlugin
+from Plugins.Pizza.Handlers.HelpHandler import HelpHandler
+from Plugins.Pizza.Handlers.SlicesHandler import SlicesHandler
+from Plugins.Pizza.Handlers.StartHandler import StartHandler
+from Plugins.Pizza.Handlers.StatusHandler import StatusHandler
+from Plugins.Pizza.Handlers.StopHandler import StopHandler
+
 
 class Command:
     def __init__(self):
@@ -6,6 +15,31 @@ class Command:
         self.start = False
         self.stop = False
         self.status = False
+
+    @classmethod
+    def parse(cls, message):
+        result = Command()
+
+        message = result._prepare_message(message=message)
+
+        result._parse_known_commands(message=message)
+        result._validate()
+
+        return result
+
+    def handle(self, plugin: PizzaPlugin, message: SkypeMsg):
+        if self.help:
+            HelpHandler(plugin=plugin, message=message).handle()
+            return
+
+        if self.start:
+            StartHandler(plugin=plugin, message=message).handle()
+        elif self.stop:
+            StopHandler(plugin=plugin, message=message).handle()
+        elif self.number_of_slices is not None:
+            SlicesHandler(plugin=plugin, message=message, slices=self.number_of_slices).handle()
+        elif self.status:
+            StatusHandler(plugin=plugin, message=message).handle()
 
     def _set_help(self, value):
         self.help = True
@@ -79,14 +113,3 @@ class Command:
             self.help = True
         elif commands_number != 1:
             raise Exception("You have to specify exactly one command at once")
-
-    @classmethod
-    def parse(cls, message):
-        result = Command()
-
-        message = result._prepare_message(message=message)
-
-        result._parse_known_commands(message=message)
-        result._validate()
-
-        return result

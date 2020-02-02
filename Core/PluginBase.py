@@ -7,7 +7,7 @@ from Core.SkypeClient import SkypeClient
 
 class PluginBase(ABC):
     def __init__(self, client: SkypeClient, database: TinyDB):
-        self._client = client
+        self.client = client
         _ = database
 
     @abstractmethod
