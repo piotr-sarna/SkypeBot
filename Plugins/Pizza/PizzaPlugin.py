@@ -2,6 +2,7 @@ from skpy import SkypeNewMessageEvent, SkypeEditMessageEvent
 
 from Core.PluginBase import PluginBase
 from Plugins.Pizza.Messages import Messages
+from Plugins.Pizza.Model.Organizer import Organizer
 from Plugins.Pizza.TinyDb.OrganizerRepository import OrganizerRepository
 from .Command import Command
 
@@ -12,7 +13,6 @@ class PizzaPlugin(PluginBase):
     def __init__(self, client, database):
         super(PizzaPlugin, self).__init__(client=client, database=database)
         self._orders = []
-        self._started_by = None
         self.__organizer_repository = OrganizerRepository(database=database, table_prefix=self.friendly_name())
 
     def friendly_name(self):
@@ -48,20 +48,26 @@ class PizzaPlugin(PluginBase):
         return Messages(self).help()
 
     def _handle_start(self, message, command):
-        if self._started_by:
+        organizer = self.__organizer_repository.find_single_at_chat(chat=message.chat)
+
+        if organizer:
             raise Exception(Messages(self).error_only_one_pizza())
 
+        organizer = Organizer().in_context(user=message.user, chat=message.chat)
+        self.__organizer_repository.insert(organizer=organizer)
+
         self._orders = []
-        self._started_by = message.user
 
         self._client.send_direct_response(Messages(self).start_direct(message.time))
-        self._client.send_group_response(Messages(self).start_group(self._started_by))
+        self._client.send_group_response(Messages(self).start_group(organizer))
 
     def _handle_stop(self, message, command):
-        if not self._started_by:
+        organizer = self.__organizer_repository.find_single_at_chat(chat=message.chat)
+
+        if not organizer:
             raise Exception(Messages(self).error_not_started())
 
-        if self._started_by.id != message.userId:
+        if organizer.user_id != message.userId:
             raise Exception(Messages(self).error_only_owner_can_stop())
 
         final_order = list(self._orders)
@@ -87,13 +93,15 @@ class PizzaPlugin(PluginBase):
         orders_summaries = [Messages(self).order(order[0], order[1]) for order in final_order]
 
         self._client.send_direct_response(Messages(self).stop_direct(message.time, number_of_pizzas, orders_summaries))
-        self._client.send_group_response(Messages(self).stop_group(self._started_by, number_of_pizzas, orders_summaries))
+        self._client.send_group_response(Messages(self).stop_group(organizer, number_of_pizzas, orders_summaries))
 
+        self.__organizer_repository.remove(organizer=organizer)
         self._orders = []
-        self._started_by = None
 
     def _handle_number_of_slices(self, message, command):
-        if not self._started_by:
+        organizer = self.__organizer_repository.find_single_at_chat(chat=message.chat)
+
+        if not organizer:
             raise Exception(Messages(self).error_not_started())
 
         existing_idx = [idx for idx, order in enumerate(self._orders) if order[0].id == message.userId]
@@ -112,7 +120,9 @@ class PizzaPlugin(PluginBase):
         self._client.send_group_response(Messages(self).slices_group(pizzas_to_order, missing_slices))
         
     def _handle_status(self, message, command):
-        if not self._started_by:
+        organizer = self.__organizer_repository.find_single_at_chat(chat=message.chat)
+
+        if not organizer:
             raise Exception(Messages(self).error_not_started())
 
         final_order = list(self._orders)
@@ -141,5 +151,5 @@ class PizzaPlugin(PluginBase):
         orders_summaries = [Messages(self).order(order[0], order[1]) for order in final_order]
         overflow_summaries = [Messages(self).order(order[0], order[1]) for order in overflow_order]
 
-        status_message = Messages(self).status(self._started_by, number_of_pizzas, missing_slices, orders_summaries, overflow_summaries)
+        status_message = Messages(self).status(organizer, number_of_pizzas, missing_slices, orders_summaries, overflow_summaries)
         self._client.send_group_response(status_message)

@@ -4,7 +4,7 @@ from typing import List
 from skpy import SkypeUser
 
 from Core.PluginBase import PluginBase
-
+from Plugins.Pizza.Model.Organizer import Organizer
 
 ERROR_NOT_STARTED = "No #pizza is currently started"
 ERROR_ONLY_ONE_PIZZA = "Exactly one #pizza can be started at the same time"
@@ -63,8 +63,8 @@ class Messages:
     def start_direct(self, start_time: datetime) -> str:
         return START_DIRECT_MESSAGE_TEMPLATE.format(time=str(start_time.replace(microsecond=0)))
 
-    def start_group(self, user: SkypeUser) -> str:
-        return START_GROUP_MESSAGE_TEMPLATE.format(user_name=user.name, user_id=user.id)
+    def start_group(self, organizer: Organizer) -> str:
+        return START_GROUP_MESSAGE_TEMPLATE.format(user_name=organizer.user_name, user_id=organizer.user_id)
 
     def stop_direct(self, stop_time: datetime, pizzas: int, orders: List[str]) -> str:
         return STOP_DIRECT_MESSAGE_TEMPLATE.format(
@@ -73,10 +73,10 @@ class Messages:
             orders="\n".join(orders)
         )
 
-    def stop_group(self, user: SkypeUser, pizzas: int, orders: List[str]) -> str:
+    def stop_group(self, organizer: Organizer, pizzas: int, orders: List[str]) -> str:
         return STOP_GROUP_MESSAGE_TEMPLATE.format(
-            user_name=user.name,
-            user_id=user.id,
+            user_name=organizer.user_name,
+            user_id=organizer.user_id,
             pizzas=pizzas,
             orders="\n".join(orders)
         )
@@ -87,10 +87,10 @@ class Messages:
     def slices_group(self, pizzas: int, missing_slices: int) -> str:
         return SLICES_NUMBER_GROUP_MESSAGE_TEMPLATE.format(pizzas=pizzas, missing_slices=missing_slices)
 
-    def status(self, user: SkypeUser, pizzas: int, missing_slices: int, orders: List[str], overflows: List[str]) -> str:
+    def status(self, organizer: Organizer, pizzas: int, missing_slices: int, orders: List[str], overflows: List[str]) -> str:
         return STATUS_MESSAGE_TEMPLATE.format(
-            user_name=user.name,
-            user_id=user.id,
+            user_name=organizer.user_name,
+            user_id=organizer.user_id,
             number_of_pizzas=pizzas,
             missing_slices=missing_slices,
             orders_summaries="\n".join(orders) if len(orders) else WHATEVER_MESSAGE,
