@@ -2,6 +2,7 @@ from skpy import SkypeNewMessageEvent, SkypeEditMessageEvent
 
 from Core.PluginBase import PluginBase
 from Plugins.Pizza.Messages import Messages
+from Plugins.Pizza.TinyDb.OrganizerRepository import OrganizerRepository
 from .Command import Command
 
 SLICES_IN_PIZZA = 8
@@ -12,6 +13,7 @@ class PizzaPlugin(PluginBase):
         super(PizzaPlugin, self).__init__(client=client, database=database)
         self._orders = []
         self._started_by = None
+        self.__organizer_repository = OrganizerRepository(database=database, table_prefix=self.friendly_name())
 
     def friendly_name(self):
         return 'Pizza plugin'

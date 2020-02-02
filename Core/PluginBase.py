@@ -1,22 +1,14 @@
-import urllib.parse
-from abc import ABCMeta, abstractmethod
+from abc import ABC, abstractmethod
 
 from tinydb import TinyDB
 
 from Core.SkypeClient import SkypeClient
 
 
-class PluginBase:
-    __metaclass__ = ABCMeta
-
+class PluginBase(ABC):
     def __init__(self, client: SkypeClient, database: TinyDB):
         self._client = client
-        self.__database = database
-        self._data_table = database.table(self.__table_name())
-
-    def __table_name(self):
-        table_name = "{friendly_name}-{version}".format(friendly_name=self.friendly_name(), version=self.version())
-        return urllib.parse.quote(table_name)
+        _ = database
 
     @abstractmethod
     def friendly_name(self): raise NotImplementedError

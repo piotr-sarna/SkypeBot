@@ -8,8 +8,9 @@ from tinydb_serialization import SerializationMiddleware
 
 from Core.PluginBase import PluginBase
 from Core.PluginsLoader import PluginsLoader
-from Core.Serializers.DateTimeSerializer import DateTimeSerializer
 from Core.SkypeClient import SkypeClient
+from Core.TinyDb.Serializers.DateTimeSerializer import DateTimeSerializer
+from Core.TinyDb.Serializers.SkypeUserNameSerializer import SkypeUserNameSerializer
 
 logging.basicConfig(
     format='%(asctime)s %(module)s %(levelname)-8s %(message)s',
@@ -37,14 +38,15 @@ def read_environment() -> Environment:
 
 def serialization_config() -> SerializationMiddleware:
     serializers = [
-        DateTimeSerializer
+        DateTimeSerializer,
+        SkypeUserNameSerializer,
     ]
 
     middleware = SerializationMiddleware()
 
     for serializer in serializers:
         logger.debug("Registering serializer '%s' for type '%s'...", serializer.__name__, serializer.OBJ_CLASS.__name__)
-        middleware.register_serializer(serializer, serializer.__name__)
+        middleware.register_serializer(serializer(), serializer.__name__)
         logger.debug("Serializer '%s' registered", serializer.__name__)
 
     return middleware
@@ -88,8 +90,8 @@ def run():
     plugins = init_plugins(client=client, database=database)
     register_plugins(plugins=plugins, client=client)
 
-    logger.debug("Setting presence...")
-    client.setPresence()
+    # logger.debug("Setting presence...")
+    # client.setPresence()
     logger.info("SkypeBot started")
     client.loop()
 
