@@ -19,7 +19,7 @@ class SlicesHandler(HandlerBase):
         self.__forced_orders = None
 
     def handle(self):
-        logger.debug("Handling...")
+        logger.debug("Handling for chat ''..." % self._chat.id)
 
         self.__ensure_started()
         self.__orders = self._orders.find_all_user(user=self._user, chat=self._chat)
