@@ -15,7 +15,7 @@ class StartHandler(HandlerBase):
         self.__organizer = None
 
     def handle(self):
-        logger.debug("Handling for chat ''..." % self._chat.id)
+        logger.debug("Handling for chat '%s'..." % self._chat.id)
 
         self.__ensure_not_started()
         self.__save_organizer()
