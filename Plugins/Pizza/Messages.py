@@ -32,7 +32,9 @@ STOP_GROUP_MESSAGE_TEMPLATE = """Summary for #pizza started by {user_name} ({use
 #pizza(s) to order: {pizzas}
 
 {orders}"""
-SLICES_NUMBER_DIRECT_MESSAGE_TEMPLATE = "You've registered for {slices_number} #pizza slice(s)"
+SLICES_USER_STATUS_NORMAL_MESSAGE_TEMPLATE = "You've registered for {slices} #pizza slice(s)"
+SLICES_USER_STATUS_FORCED_MESSAGE_TEMPLATE = """You've registered for {slices} #pizza slice(s). 
+You've reduced your order, so it can be increased by up to {forced_slices} #pizza slice(s)."""
 SLICES_NUMBER_GROUP_MESSAGE_TEMPLATE = "{pizzas} #pizza(s) to order, {missing_slices} slice(s) are missing for the next #pizza"
 STATUS_MESSAGE_TEMPLATE = """Started by {user_name} ({user_id})
 Total #pizza(s) to order: {number_of_pizzas}
@@ -84,8 +86,12 @@ class Messages:
         )
 
     @staticmethod
-    def slices_direct(slices_number: int) -> str:
-        return SLICES_NUMBER_DIRECT_MESSAGE_TEMPLATE.format(slices_number=slices_number)
+    def slices_user_status_normal(slices: int) -> str:
+        return SLICES_USER_STATUS_NORMAL_MESSAGE_TEMPLATE.format(slices=slices)
+
+    @staticmethod
+    def slices_user_status_forced(slices: int, forced_slices: int) -> str:
+        return SLICES_USER_STATUS_FORCED_MESSAGE_TEMPLATE.format(slices=slices, forced_slices=forced_slices)
 
     @staticmethod
     def slices_group(pizzas: int, missing_slices: int) -> str:

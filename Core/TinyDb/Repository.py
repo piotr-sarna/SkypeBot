@@ -21,19 +21,31 @@ class Repository(ABC):
     def insert(self, model: ModelBase):
         model.doc_id = self._table.insert(model)
 
+    def insert_multiple(self, models: List[ModelBase]):
+        if len(models) == 0:
+            return
+
+        doc_ids = self._table.insert_multiple(models)
+
+        for i in range(len(models)):
+            models[i].doc_id = doc_ids[i]
+
     def remove(self, model: ModelBase):
         self._table.remove(doc_ids=[model.doc_id])
+
+    def remove_multiple(self, models: List[ModelBase]):
+        self._table.remove(doc_ids=[model.doc_id for model in models])
 
     def remove_all(self, chat: SkypeChat):
         self._table.remove(Query().chat_id == chat.id)
 
-    def find_all(self, chat: SkypeChat) -> List[ModelBase]:
+    def find_all(self, chat: SkypeChat) -> List:
         query = Query()
         docs = self._table.search(query.chat_id == chat.id)
 
         return [self.MODEL_CLASS().fill(doc=doc) for doc in docs]
 
-    def find_all_user(self, user: SkypeUser, chat: SkypeChat) -> List[ModelBase]:
+    def find_all_user(self, user: SkypeUser, chat: SkypeChat) -> List:
         query = Query()
         docs = self._table.search((query.user_id == user.id) & (query.chat_id == chat.id))
 
