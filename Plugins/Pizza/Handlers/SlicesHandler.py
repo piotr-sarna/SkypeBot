@@ -76,7 +76,7 @@ class SlicesHandler(HandlerBase):
     def __move_forced_to_normal(self):
         to_move_to_normal = min(len(self.__forced_orders), (self._slices - len(self.__orders)))
         forced_orders_to_remove = self.__forced_orders[:to_move_to_normal]
-        orders_to_create = [Order().with_forced_order(forced_order=order) for order in forced_orders_to_remove]
+        orders_to_create = [order.to_order() for order in forced_orders_to_remove]
 
         logger.debug("Moving %d forced orders to normal" % len(forced_orders_to_remove))
 

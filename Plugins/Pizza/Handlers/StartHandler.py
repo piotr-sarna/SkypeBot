@@ -28,7 +28,7 @@ class StartHandler(HandlerBase):
         self.__organizer = self._organizers.find_single(chat=self._chat)
 
         if self.__organizer:
-            raise Exception(Messages.error_not_started())
+            raise Exception(Messages.error_only_one_pizza())
 
         logger.debug("Pizza NOT started. OK.")
 

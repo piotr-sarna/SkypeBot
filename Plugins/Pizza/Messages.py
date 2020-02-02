@@ -1,9 +1,10 @@
 from datetime import datetime
-from typing import List
+from typing import List, Optional
 
 from skpy import SkypeUser
 
 from Core.PluginBase import PluginBase
+from Plugins.Pizza.Model.Order import Order
 from Plugins.Pizza.Model.Organizer import Organizer
 
 ERROR_NOT_STARTED = "No #pizza is currently started"
@@ -27,11 +28,15 @@ STOP_DIRECT_MESSAGE_TEMPLATE = """You've stopped #pizza at {time} UTC.
 Summary:
 #pizza(s) to order: {pizzas}
 {orders}
-"""
+
+Lucky #pizza slice for {lucky_name} ({lucky_id})"""
 STOP_GROUP_MESSAGE_TEMPLATE = """Summary for #pizza started by {user_name} ({user_id}):
 #pizza(s) to order: {pizzas}
 
-{orders}"""
+Summary:
+{orders}
+
+Lucky #pizza slice for {lucky_name} ({lucky_id})"""
 SLICES_USER_STATUS_NORMAL_MESSAGE_TEMPLATE = "You've registered for {slices} #pizza slice(s)"
 SLICES_USER_STATUS_FORCED_MESSAGE_TEMPLATE = """You've registered for {slices} #pizza slice(s). 
 You've reduced your order, so it can be increased by up to {forced_slices} #pizza slice(s)."""
@@ -69,20 +74,24 @@ class Messages:
         return START_GROUP_MESSAGE_TEMPLATE.format(user_name=organizer.user_name, user_id=organizer.user_id)
 
     @staticmethod
-    def stop_direct(stop_time: datetime, pizzas: int, orders: List[str]) -> str:
+    def stop_direct(stop_time: datetime, pizzas: int, orders: List[str], lucky_order: Optional[Order]) -> str:
         return STOP_DIRECT_MESSAGE_TEMPLATE.format(
             time=str(stop_time.replace(microsecond=0)),
             pizzas=pizzas,
-            orders="\n".join(orders)
+            orders="\n".join(orders),
+            lucky_name=lucky_order.user_name if lucky_order else None,
+            lucky_id=lucky_order.user_id if lucky_order else None
         )
 
     @staticmethod
-    def stop_group(organizer: Organizer, pizzas: int, orders: List[str]) -> str:
+    def stop_group(organizer: Organizer, pizzas: int, orders: List[str], lucky_order: Optional[Order]) -> str:
         return STOP_GROUP_MESSAGE_TEMPLATE.format(
             user_name=organizer.user_name,
             user_id=organizer.user_id,
             pizzas=pizzas,
-            orders="\n".join(orders)
+            orders="\n".join(orders),
+            lucky_name=lucky_order.user_name if lucky_order else None,
+            lucky_id=lucky_order.user_id if lucky_order else None
         )
 
     @staticmethod
@@ -109,10 +118,10 @@ class Messages:
         )
 
     @staticmethod
-    def order(user: SkypeUser, slices: int) -> str:
+    def order(order: Order, slices: int) -> str:
         return ORDER_MESSAGE_TEMPLATE.format(
-            user_name=user.name,
-            user_id=user.id,
+            user_name=order.user_name,
+            user_id=order.user_id,
             slices=slices
         )
 
