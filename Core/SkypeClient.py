@@ -1,6 +1,6 @@
 import logging
 
-from skpy import SkypeEventLoop, SkypeMessageEvent, SkypeEditMessageEvent, SkypeConnection
+from skpy import SkypeEventLoop, SkypeMessageEvent, SkypeEditMessageEvent, SkypeConnection, SkypeAuthException
 
 logger = logging.getLogger(__name__)
 
@@ -25,8 +25,13 @@ class SkypeClient(SkypeEventLoop):
 
     def loop(self):
         while True:
-            self.conn.verifyToken(SkypeConnection.Auth.SkypeToken)
-            self.cycle()
+            try:
+                self.conn.verifyToken(SkypeConnection.Auth.SkypeToken)
+                self.cycle()
+            except SkypeAuthException as ex:
+                logger.exception("SkypeAuthException raised", ex)
+            except Exception as ex:
+                logger.exception("Unknown exception raised", ex)
 
     def send_direct_message(self, user_id, message: str):
         self.contacts[user_id].chat.sendMsg(message)
