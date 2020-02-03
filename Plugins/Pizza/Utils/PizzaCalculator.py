@@ -2,7 +2,7 @@ import itertools
 import logging
 import random
 from collections import namedtuple
-from typing import List, Dict
+from typing import List, Dict, Optional
 
 from Plugins.Pizza.Model.ForcedOrder import ForcedOrder
 from Plugins.Pizza.Model.OptionalOrder import OptionalOrder
@@ -47,9 +47,6 @@ class PizzaCalculator:
             logger.debug("Order reduced")
             self.__final_orders = self.__reduced_orders
 
-        logger.debug("Rolling lucky order")
-        self.__lucky_order = random.choice(self.__final_orders) if self.__final_orders else None
-
     @property
     def pizzas_to_order(self) -> int:
         return len(self.__final_orders) // self.SLICES_IN_PIZZA
@@ -64,8 +61,17 @@ class PizzaCalculator:
         return missing_slices - min(missing_slices, optional_orders + forced_orders)
 
     @property
-    def lucky_order(self) -> Order:
-        return self.__lucky_order
+    def lucky_order(self) -> Optional[Order]:
+        if self.__lucky_order:
+            return self.__lucky_order
+
+        if len(self.users_orders) < 2:
+            logger.debug("Not enough users to roll lucky order")
+            return None
+
+        logger.debug("Rolling lucky order")
+        self.__lucky_order = random.choice(self.__final_orders)
+        return
 
     @property
     def users_orders(self) -> Dict[str, List[Order]]:
@@ -112,9 +118,10 @@ class PizzaCalculator:
             return
 
         too_many_orders = len(orders) > self.__missing_orders_count
-        orders_to_map = orders if not too_many_orders else OrdersHelper.sort_orders_alternately(orders=orders)
-        self.__missing_orders_count -= min(len(orders_to_map), self.__missing_orders_count)
-        self.__selected_optional_orders += [order for order in orders_to_map]
+        orders_to_select = orders if not too_many_orders else OrdersHelper.sort_orders_alternately(orders=orders)
+        orders_to_select_count = min(len(orders_to_select), self.__missing_orders_count)
+        self.__selected_optional_orders += [order for order in orders_to_select[:orders_to_select_count]]
+        self.__missing_orders_count -= orders_to_select_count
 
     def __reduce_order(self):
         logger.debug("Reducing order")

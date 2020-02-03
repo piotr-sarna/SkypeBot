@@ -23,20 +23,17 @@ Commands:
 """
 START_DIRECT_MESSAGE_TEMPLATE = "You've started #pizza at {time} UTC. Please remember to #pizza #stop"
 START_GROUP_MESSAGE_TEMPLATE = "#pizza started by {user_name} ({user_id})"
+STOP_LUCKY_MESSAGE_TEMPLATE = "Lucky #pizza slice for {lucky_name} ({lucky_id})"
 STOP_DIRECT_MESSAGE_TEMPLATE = """You've stopped #pizza at {time} UTC.
 
 Summary:
 #pizza(s) to order: {pizzas}
-{orders}
-
-Lucky #pizza slice for {lucky_name} ({lucky_id})"""
+{orders}"""
 STOP_GROUP_MESSAGE_TEMPLATE = """Summary for #pizza started by {user_name} ({user_id}):
 #pizza(s) to order: {pizzas}
 
 Summary:
-{orders}
-
-Lucky #pizza slice for {lucky_name} ({lucky_id})"""
+{orders}"""
 SLICES_USER_STATUS_NORMAL_MESSAGE_TEMPLATE = "You've registered for {slices} #pizza slice(s)"
 SLICES_USER_STATUS_FORCED_MESSAGE_TEMPLATE = """You've registered for {slices} #pizza slice(s). 
 You've reduced your order, so it can be increased by up to {forced_slices} #pizza slice(s)."""
@@ -75,24 +72,36 @@ class Messages:
 
     @staticmethod
     def stop_direct(stop_time: datetime, pizzas: int, orders: List[str], lucky_order: Optional[Order]) -> str:
-        return STOP_DIRECT_MESSAGE_TEMPLATE.format(
+        standard_message = STOP_DIRECT_MESSAGE_TEMPLATE.format(
             time=str(stop_time.replace(microsecond=0)),
             pizzas=pizzas,
-            orders="\n".join(orders),
+            orders="\n".join(orders) if orders else WHATEVER_MESSAGE
+        )
+
+        return standard_message \
+            if not lucky_order \
+            else standard_message + "\n\n" + STOP_LUCKY_MESSAGE_TEMPLATE.format(
+                lucky_name=lucky_order.user_name,
+                lucky_id=lucky_order.user_id
+            )
+
+    @staticmethod
+    def stop_group(organizer: Organizer, pizzas: int, orders: List[str], lucky_order: Optional[Order]) -> str:
+        standard_message = STOP_GROUP_MESSAGE_TEMPLATE.format(
+            user_name=organizer.user_name,
+            user_id=organizer.user_id,
+            pizzas=pizzas,
+            orders="\n".join(orders) if orders else WHATEVER_MESSAGE,
             lucky_name=lucky_order.user_name if lucky_order else None,
             lucky_id=lucky_order.user_id if lucky_order else None
         )
 
-    @staticmethod
-    def stop_group(organizer: Organizer, pizzas: int, orders: List[str], lucky_order: Optional[Order]) -> str:
-        return STOP_GROUP_MESSAGE_TEMPLATE.format(
-            user_name=organizer.user_name,
-            user_id=organizer.user_id,
-            pizzas=pizzas,
-            orders="\n".join(orders),
-            lucky_name=lucky_order.user_name if lucky_order else None,
-            lucky_id=lucky_order.user_id if lucky_order else None
-        )
+        return standard_message \
+            if not lucky_order \
+            else standard_message + "\n\n" + STOP_LUCKY_MESSAGE_TEMPLATE.format(
+                lucky_name=lucky_order.user_name,
+                lucky_id=lucky_order.user_id
+            )
 
     @staticmethod
     def slices_user_status(slices: int, forced_slices: int = 0) -> str:
