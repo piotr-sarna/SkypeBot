@@ -40,6 +40,7 @@ Lucky #pizza slice for {lucky_name} ({lucky_id})"""
 SLICES_USER_STATUS_NORMAL_MESSAGE_TEMPLATE = "You've registered for {slices} #pizza slice(s)"
 SLICES_USER_STATUS_FORCED_MESSAGE_TEMPLATE = """You've registered for {slices} #pizza slice(s). 
 You've reduced your order, so it can be increased by up to {forced_slices} #pizza slice(s)."""
+OPTIONAL_SLICES_USER_STATUS_NORMAL_MESSAGE_TEMPLATE = "You've registered for {slices} optional #pizza slice(s)"
 SLICES_NUMBER_GROUP_MESSAGE_TEMPLATE = "{pizzas} #pizza(s) to order, {missing_slices} slice(s) are missing for the next #pizza"
 STATUS_MESSAGE_TEMPLATE = """Started by {user_name} ({user_id})
 Total #pizza(s) to order: {number_of_pizzas}
@@ -95,16 +96,19 @@ class Messages:
         )
 
     @staticmethod
-    def slices_user_status_normal(slices: int) -> str:
-        return SLICES_USER_STATUS_NORMAL_MESSAGE_TEMPLATE.format(slices=slices)
-
-    @staticmethod
-    def slices_user_status_forced(slices: int, forced_slices: int) -> str:
-        return SLICES_USER_STATUS_FORCED_MESSAGE_TEMPLATE.format(slices=slices, forced_slices=forced_slices)
+    def slices_user_status(slices: int, forced_slices: int = 0) -> str:
+        if forced_slices != 0:
+            return SLICES_USER_STATUS_FORCED_MESSAGE_TEMPLATE.format(slices=slices, forced_slices=forced_slices)
+        else:
+            return SLICES_USER_STATUS_NORMAL_MESSAGE_TEMPLATE.format(slices=slices)
 
     @staticmethod
     def slices_group(pizzas: int, missing_slices: int) -> str:
         return SLICES_NUMBER_GROUP_MESSAGE_TEMPLATE.format(pizzas=pizzas, missing_slices=missing_slices)
+
+    @staticmethod
+    def optional_slices_user_status(optional_slices: int) -> str:
+        return OPTIONAL_SLICES_USER_STATUS_NORMAL_MESSAGE_TEMPLATE.format(slices=optional_slices)
 
     @staticmethod
     def status(organizer: Organizer, pizzas: int, missing_slices: int, orders: List[str], overflows: List[str]) -> str:

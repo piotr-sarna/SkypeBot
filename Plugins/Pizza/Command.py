@@ -2,6 +2,7 @@ from skpy import SkypeMsg
 
 from Plugins.Pizza import PizzaPlugin
 from Plugins.Pizza.Handlers.HelpHandler import HelpHandler
+from Plugins.Pizza.Handlers.OptionalSlicesHandler import OptionalSlicesHandler
 from Plugins.Pizza.Handlers.SlicesHandler import SlicesHandler
 from Plugins.Pizza.Handlers.StartHandler import StartHandler
 from Plugins.Pizza.Handlers.StatusHandler import StatusHandler
@@ -12,6 +13,7 @@ class Command:
     def __init__(self):
         self.help = False
         self.number_of_slices = None
+        self.optional_slices = None
         self.start = False
         self.stop = False
         self.status = False
@@ -38,6 +40,8 @@ class Command:
             StopHandler(plugin=plugin, message=message).handle()
         elif self.number_of_slices is not None:
             SlicesHandler(plugin=plugin, message=message, slices=self.number_of_slices).handle()
+        elif self.optional_slices is not None:
+            OptionalSlicesHandler(plugin=plugin, message=message, slices=self.optional_slices).handle()
         elif self.status:
             StatusHandler(plugin=plugin, message=message).handle()
 
@@ -67,6 +71,20 @@ class Command:
     def _set_status(self, value):
         self.status = True
 
+    def _set_optional_slices(self, value):
+        if not value:
+            return
+
+        try:
+            value = int(value)
+
+            if value < 0:
+                raise ValueError("negative value")
+        except ValueError as ex:
+            raise ValueError("Number must be a positive integer. Inner reason: \"" + str(ex) + "\"")
+
+        self.optional_slices = value
+
     def _known_commands(self):
         return {
             "#help": self._set_help,
@@ -74,6 +92,7 @@ class Command:
             "#start": self._set_start,
             "#stop": self._set_stop,
             "#status": self._set_status,
+            "#optional": self._set_optional_slices,
         }
 
     def _prepare_message(self, message):
@@ -107,6 +126,7 @@ class Command:
         commands_number += 1 if self.start else 0
         commands_number += 1 if self.stop else 0
         commands_number += 1 if self.number_of_slices is not None else 0
+        commands_number += 1 if self.optional_slices is not None else 0
         commands_number += 1 if self.status else 0
 
         if commands_number == 0:

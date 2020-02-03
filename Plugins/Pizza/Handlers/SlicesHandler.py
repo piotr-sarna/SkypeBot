@@ -88,10 +88,9 @@ class SlicesHandler(HandlerBase):
 
     def __send_user_status(self):
         forced_slices = len(self.__forced_orders)
-        message = Messages.slices_user_status_normal(slices=self._slices) \
-            if forced_slices == 0 \
-            else Messages.slices_user_status_forced(slices=self._slices, forced_slices=forced_slices)
-        self._client.send_direct_response(message)
+        self._client.send_direct_response(
+            Messages.slices_user_status(slices=self._slices, forced_slices=forced_slices)
+        )
 
     def __send_chat_status(self):
         all_slices = len(self._orders.find_all(chat=self._chat))
