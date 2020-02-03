@@ -34,13 +34,13 @@ class SkypeClient(SkypeEventLoop):
                 logger.exception("Unknown exception raised", ex)
 
     def send_direct_message(self, user_id, message: str):
-        self.contacts[user_id].chat.sendMsg(message)
+        self.contacts[user_id].chat.sendMsg(content=message)
 
     def send_direct_response(self, message: str):
-        self.__current_event.msg.user.chat.sendMsg(message)
+        self.__current_event.msg.user.chat.sendMsg(content=message)
 
     def send_group_response(self, message: str):
-        self.__current_event.msg.chat.sendMsg(message)
+        self.__current_event.msg.chat.sendMsg(content=message)
 
     def __process_message_event(self, event):
         keyword = self.__get_keyword(event=event)

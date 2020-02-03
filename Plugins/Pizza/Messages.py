@@ -1,11 +1,10 @@
 from datetime import datetime
 from typing import List, Optional
 
-from skpy import SkypeUser
-
 from Core.PluginBase import PluginBase
 from Plugins.Pizza.Model.Order import Order
 from Plugins.Pizza.Model.Organizer import Organizer
+from Plugins.Pizza.Utils.PizzaCalculator import OrderSummary
 
 ERROR_NOT_STARTED = "No #pizza is currently started"
 ERROR_ONLY_ONE_PIZZA = "Exactly one #pizza can be started at the same time"
@@ -19,6 +18,7 @@ Commands:
     #start
     #stop
     #status
+    #optional NUMBER_OF_SLICES
     NUMBER_OF_SLICES
 """
 START_DIRECT_MESSAGE_TEMPLATE = "You've started #pizza at {time} UTC. Please remember to #pizza #stop"
@@ -49,8 +49,7 @@ Slice(s) missing for the next #pizza: {missing_slices}
 #pizza participants:
 {orders_summaries}
 
-#pizza reserve list:
-{overflow_summaries}
+reg - registered slice(s), opt - optional slice(s), rem - slice(s) requested to remove
 """
 ORDER_MESSAGE_TEMPLATE = "{user_name} ({user_id}) - {slices}"
 ORDER_REDUCED_MESSAGE_TEMPLATE = "Sorry, your #pizza order was reduced to {slices} slice(s), because of rounding to whole #pizza(s) :("
@@ -111,14 +110,29 @@ class Messages:
         return OPTIONAL_SLICES_USER_STATUS_NORMAL_MESSAGE_TEMPLATE.format(slices=optional_slices)
 
     @staticmethod
-    def status(organizer: Organizer, pizzas: int, missing_slices: int, orders: List[str], overflows: List[str]) -> str:
+    def status_user_summary(summary: OrderSummary) -> str:
+        additional_info = [
+            ("reg", summary.registered),
+            ("opt", summary.optional),
+            ("rem", summary.to_remove)
+        ]
+        additional_info_str = ", ".join(["%s=%d" % info for info in additional_info if info[1]])
+        message = "{user_name} ({user_id}) - {slices}".format(
+            user_name=summary.user_name,
+            user_id=summary.user_id,
+            slices=summary.order
+        )
+
+        return message if not additional_info else message + " (%s)" % additional_info_str
+
+    @staticmethod
+    def status(organizer: Organizer, pizzas: int, missing_slices: int, summaries: List[str]) -> str:
         return STATUS_MESSAGE_TEMPLATE.format(
             user_name=organizer.user_name,
             user_id=organizer.user_id,
             number_of_pizzas=pizzas,
             missing_slices=missing_slices,
-            orders_summaries="\n".join(orders) if len(orders) else WHATEVER_MESSAGE,
-            overflow_summaries="\n".join(overflows) if len(overflows) else WHATEVER_MESSAGE,
+            orders_summaries="\n".join(summaries) if len(summaries) else WHATEVER_MESSAGE,
         )
 
     @staticmethod

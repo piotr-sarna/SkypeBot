@@ -11,8 +11,6 @@ from .Command import Command
 
 
 class PizzaPlugin(PluginBase):
-    SLICES_IN_PIZZA = 8
-
     def __init__(self, client, database):
         super(PizzaPlugin, self).__init__(client=client, database=database)
 

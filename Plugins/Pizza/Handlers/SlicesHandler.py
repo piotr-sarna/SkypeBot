@@ -6,7 +6,7 @@ from Plugins.Pizza.Handlers.HandlerBase import HandlerBase
 from Plugins.Pizza.Messages import Messages
 from Plugins.Pizza.Model.ForcedOrder import ForcedOrder
 from Plugins.Pizza.Model.Order import Order
-
+from Plugins.Pizza.Utils.PizzaCalculator import PizzaCalculator
 
 logger = logging.getLogger(__name__)
 
@@ -93,17 +93,15 @@ class SlicesHandler(HandlerBase):
         )
 
     def __send_chat_status(self):
-        all_slices = len(self._orders.find_all(chat=self._chat))
-        missing_slices = self._plugin.SLICES_IN_PIZZA - all_slices % self._plugin.SLICES_IN_PIZZA
+        pizza_calculator = PizzaCalculator(
+            orders=self._orders.find_all(chat=self._chat),
+            optional_orders=self._optional_orders.find_all(chat=self._chat),
+            forced_orders=self._forced_orders.find_all(chat=self._chat)
+        )
 
-        if missing_slices > 0:
-            optional_orders = len(self._optional_orders.find_all(chat=self._chat))
-            forced_orders = len(self._forced_orders.find_all(chat=self._chat))
+        pizza_calculator.calculate()
 
-            if optional_orders + forced_orders >= missing_slices:
-                all_slices += missing_slices
-                missing_slices = 0
-
-        pizzas_to_order = all_slices // self._plugin.SLICES_IN_PIZZA
-
-        self._client.send_group_response(Messages.slices_group(pizzas_to_order, missing_slices))
+        self._client.send_group_response(Messages.slices_group(
+            pizzas=pizza_calculator.pizzas_to_order,
+            missing_slices=pizza_calculator.missing_slices_to_next_pizza
+        ))
