@@ -1,14 +1,10 @@
 import logging
-import random
-from typing import List
 
 from skpy import SkypeMsg
 
 from Plugins.Pizza import PizzaPlugin
 from Plugins.Pizza.Handlers.HandlerBase import HandlerBase
 from Plugins.Pizza.Messages import Messages
-from Plugins.Pizza.Model.Order import Order
-from Plugins.Pizza.Utils.OrdersHelper import OrdersHelper
 from Plugins.Pizza.Utils.PizzaCalculator import PizzaCalculator
 
 logger = logging.getLogger(__name__)
