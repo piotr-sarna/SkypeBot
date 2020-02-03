@@ -25,9 +25,9 @@ class PizzaCalculator:
 
         self.__selected_optional_orders = []
 
-        self.__final_orders = None
-        self.__reduced_orders = None
-        self.__removed_orders = None
+        self.__final_orders = []
+        self.__reduced_orders = []
+        self.__removed_orders = []
         self.__lucky_order = None
 
         self.__missing_orders_count = None
