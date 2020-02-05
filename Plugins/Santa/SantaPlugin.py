@@ -63,7 +63,7 @@ Commands:
 
     def _process_if_help_command(self, message, command):
         if command.help:
-            self._client.send_direct_response(self.help_message())
+            self.client.send_direct_response(self.help_message())
 
         return command.help
 
@@ -74,14 +74,14 @@ Commands:
 
         self._started_by = message.user
 
-        self._client.send_direct_response(
+        self.client.send_direct_response(
             "You've started #santa {time} UTC. Please remember to #santa #stop".format(time=str(message.time.replace(
                 microsecond=0)))
         )
 
-        self._client.send_group_response("#santa started by {user_name} ({user_id})".format(user_name=self._started_by.name,
+        self.client.send_group_response("#santa started by {user_name} ({user_id})".format(user_name=self._started_by.name,
                                                                                 user_id=self._started_by.id))
-        self._client.send_group_response(self.help_message())
+        self.client.send_group_response(self.help_message())
 
     def _handle_stop(self, message, command):
         if not self._started_by:
@@ -117,7 +117,7 @@ Commands:
                                                         draw=draw_results[participant])
                         for participant in draw_results]
 
-        self._client.send_direct_response(
+        self.client.send_direct_response(
             """You've stopped #santa at {time} UTC,
 
 Summary:
@@ -130,7 +130,7 @@ Participants list:
             participants_list="\n".join(participants_summary))
         )
 
-        self._client.send_group_response(
+        self.client.send_group_response(
 """Summary:
 Total participants: {total_participants}
 
@@ -142,14 +142,14 @@ Participants list:
         )
 
         for participant in draw_results:
-            self._client.send_direct_message(participant,
+            self.client.send_direct_message(participant,
 """Your draw is: {user_name} ({user_id}).
 """.format(
             user_name=self._participants[draw_results[participant]].name,
             user_id=draw_results[participant])
             )
 
-        self._client.send_direct_response(
+        self.client.send_direct_response(
 """Draw results:
 {draw_summary}
 """.format(draw_summary="\n".join(draw_summary))
@@ -168,7 +168,7 @@ Participants list:
         if command.participate:
             self._participants[message.userId] = message.user
 
-            self._client.send_direct_response("You're on #santa's list now!")
+            self.client.send_direct_response("You're on #santa's list now!")
 
     def _handle_status(self, message, command):
         total_participants = len(self._participants)
@@ -176,7 +176,7 @@ Participants list:
                                                                 user_id=self._participants[participant].id)
                                for participant in self._participants]
 
-        self._client.send_group_response(
+        self.client.send_group_response(
 """Total participants now: {total_participants}.
 Current participants list:
 {participants_list}
