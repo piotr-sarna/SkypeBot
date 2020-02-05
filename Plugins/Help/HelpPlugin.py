@@ -19,7 +19,7 @@ class HelpPlugin(PluginBase):
         if not isinstance(event, SkypeNewMessageEvent):
             return
 
-        self._client.send_direct_response(self.help_message())
+        self.client.send_direct_response(self.help_message())
 
     def help_message(self):
-        return Messages(self).help_message(self._client._handlers)
+        return Messages(self).help_message(self.client._handlers)
