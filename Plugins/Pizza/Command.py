@@ -55,10 +55,10 @@ class Command:
         try:
             value = int(value)
 
-            if value < 0:
-                raise ValueError("negative value")
+            if not (0 <= value <= 8):
+                raise ValueError("Value out of range")
         except ValueError as ex:
-            raise ValueError("Number must be a positive integer. Inner reason: \"" + str(ex) + "\"")
+            raise ValueError("Number of slices must be an integer between 0 and 8. Inner reason: \"" + str(ex) + "\"")
 
         self.number_of_slices = value
 
@@ -78,10 +78,10 @@ class Command:
         try:
             value = int(value)
 
-            if value < 0:
-                raise ValueError("negative value")
+            if not (0 <= value <= 7):
+                raise ValueError("Value out of range")
         except ValueError as ex:
-            raise ValueError("Number must be a positive integer. Inner reason: \"" + str(ex) + "\"")
+            raise ValueError("Number of optional slices must be an integer between 0 and 7. Inner reason: \"" + str(ex) + "\"")
 
         self.optional_slices = value
 
