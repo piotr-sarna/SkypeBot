@@ -32,6 +32,11 @@ class SlicesHandler(HandlerBase):
         else:
             logger.debug("Nothing to do")
 
+        self.__trim_forced_orders()
+
+        self.__orders = self._orders.find_all_user(user=self._user, chat=self._chat)
+        self.__forced_orders = self._forced_orders.find_all_user(user=self._user, chat=self._chat)
+
         logger.debug("Normal orders: %d, forced orders: %d" % (len(self.__orders), len(self.__forced_orders)))
 
         self.__send_user_status()
@@ -59,7 +64,6 @@ class SlicesHandler(HandlerBase):
 
         orders = [Order().with_context(user=self._user, chat=self._chat) for _ in range(orders_to_create)]
         self._orders.insert_multiple(orders)
-        self.__orders += orders
 
     def __move_normal_to_forced(self):
         orders_to_remove = self.__orders[self._slices:]
@@ -69,9 +73,6 @@ class SlicesHandler(HandlerBase):
 
         self._orders.remove_multiple(orders_to_remove)
         self._forced_orders.insert_multiple(forced_orders_to_create)
-
-        self.__orders = [order for order in self.__orders if order not in orders_to_remove]
-        self.__forced_orders += forced_orders_to_create
 
     def __move_forced_to_normal(self):
         to_move_to_normal = min(len(self.__forced_orders), (self._slices - len(self.__orders)))
@@ -83,8 +84,16 @@ class SlicesHandler(HandlerBase):
         self._forced_orders.remove_multiple(forced_orders_to_remove)
         self._orders.insert_multiple(orders_to_create)
 
-        self.__forced_orders = [order for order in self.__forced_orders if order not in forced_orders_to_remove]
-        self.__orders += orders_to_create
+    def __trim_forced_orders(self):
+        orders = self._orders.find_all(chat=self._chat)
+        forced_orders = self._forced_orders.find_all(chat=self._chat)
+        new_pizza_orders = len(orders) % PizzaCalculator.SLICES_IN_PIZZA
+        missing_orders = PizzaCalculator.SLICES_IN_PIZZA - new_pizza_orders
+
+        if new_pizza_orders == 0:
+            self._forced_orders.remove_multiple(forced_orders)
+        elif missing_orders < len(forced_orders):
+            self._forced_orders.remove_multiple(forced_orders[:-missing_orders])
 
     def __send_user_status(self):
         forced_slices = len(self.__forced_orders)
