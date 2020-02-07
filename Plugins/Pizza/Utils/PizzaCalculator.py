@@ -58,7 +58,9 @@ class PizzaCalculator:
         forced_orders = len(self.__forced_orders)
         missing_slices = self.SLICES_IN_PIZZA - orders % self.SLICES_IN_PIZZA
 
-        return missing_slices - min(missing_slices, optional_orders + forced_orders)
+        return missing_slices \
+            if missing_slices == self.SLICES_IN_PIZZA \
+            else missing_slices - min(missing_slices, optional_orders + forced_orders)
 
     @property
     def lucky_order(self) -> Optional[Order]:
