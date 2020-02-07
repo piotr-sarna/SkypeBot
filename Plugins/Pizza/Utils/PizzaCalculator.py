@@ -71,7 +71,7 @@ class PizzaCalculator:
 
         logger.debug("Rolling lucky order")
         self.__lucky_order = random.choice(self.__final_orders)
-        return
+        return self.__lucky_order
 
     @property
     def users_orders(self) -> Dict[str, List[Order]]:

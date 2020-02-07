@@ -60,18 +60,18 @@ class StopHandler(HandlerBase):
 
     def __send_user_status(self):
         self._client.send_direct_response(
-            Messages.stop_direct(self._message.time,
-                                 self.__pizza_calculator.pizzas_to_order,
-                                 self.__orders_summaries,
-                                 self.__pizza_calculator.lucky_order)
+            Messages.stop_direct(stop_time=self._message.time,
+                                 pizzas=self.__pizza_calculator.pizzas_to_order,
+                                 orders=self.__orders_summaries,
+                                 lucky_order=self.__pizza_calculator.lucky_order)
         )
 
     def __send_chat_status(self):
         self._client.send_group_response(
-            Messages.stop_group(self.__organizer,
-                                self.__pizza_calculator.pizzas_to_order,
-                                self.__orders_summaries,
-                                self.__pizza_calculator.lucky_order)
+            Messages.stop_group(organizer=self.__organizer,
+                                pizzas=self.__pizza_calculator.pizzas_to_order,
+                                orders=self.__orders_summaries,
+                                lucky_order=self.__pizza_calculator.lucky_order)
         )
 
     def __send_info_to_removed_users(self):

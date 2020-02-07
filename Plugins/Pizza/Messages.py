@@ -91,9 +91,7 @@ class Messages:
             user_name=organizer.user_name,
             user_id=organizer.user_id,
             pizzas=pizzas,
-            orders="\n".join(orders) if orders else WHATEVER_MESSAGE,
-            lucky_name=lucky_order.user_name if lucky_order else None,
-            lucky_id=lucky_order.user_id if lucky_order else None
+            orders="\n".join(orders) if orders else WHATEVER_MESSAGE
         )
 
         return standard_message \
