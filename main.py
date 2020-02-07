@@ -1,7 +1,7 @@
 import logging
 import os
 from collections import namedtuple
-from typing import List
+from typing import List, Type
 
 from tinydb import TinyDB
 from tinydb_serialization import SerializationMiddleware
@@ -37,6 +37,9 @@ def read_environment() -> Environment:
 
 
 def serialization_config() -> SerializationMiddleware:
+    def full_name(t: Type):
+        return "%s.%s" % (t.__module__, t.__qualname__)
+
     serializers = [
         DateTimeSerializer,
         SkypeUserNameSerializer,
@@ -45,9 +48,9 @@ def serialization_config() -> SerializationMiddleware:
     middleware = SerializationMiddleware()
 
     for serializer in serializers:
-        logger.debug("Registering serializer '%s' for type '%s'...", serializer.__name__, serializer.OBJ_CLASS.__name__)
-        middleware.register_serializer(serializer(), serializer.__name__)
-        logger.debug("Serializer '%s' registered", serializer.__name__)
+        logger.debug("Registering serializer '%s' for type '%s'...", full_name(serializer), full_name(serializer.OBJ_CLASS))
+        middleware.register_serializer(serializer(), full_name(serializer))
+        logger.debug("Serializer '%s' registered", full_name(serializer))
 
     return middleware
 

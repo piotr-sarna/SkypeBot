@@ -1,6 +1,8 @@
 import logging
+from time import sleep
 
-from skpy import SkypeEventLoop, SkypeMessageEvent, SkypeEditMessageEvent, SkypeConnection, SkypeAuthException
+from skpy import SkypeEventLoop, SkypeMessageEvent, SkypeEditMessageEvent, SkypeConnection, SkypeAuthException, \
+    SkypeApiException
 
 logger = logging.getLogger(__name__)
 
@@ -28,10 +30,13 @@ class SkypeClient(SkypeEventLoop):
             try:
                 self.conn.verifyToken(SkypeConnection.Auth.SkypeToken)
                 self.cycle()
-            except SkypeAuthException as ex:
-                logger.exception("SkypeAuthException raised", ex)
-            except Exception as ex:
-                logger.exception("Unknown exception raised", ex)
+            except (SkypeAuthException, SkypeApiException, Exception) as ex:
+                logger.exception("%s raised", ex.__class__.__name__)
+                logger.debug("Waiting 3 sec before retry...")
+                sleep(3)
+            except:
+                logger.exception("Non-exception raised")
+                raise
 
     def send_direct_message(self, user_id, message: str):
         self.contacts[user_id].chat.sendMsg(content=message)
