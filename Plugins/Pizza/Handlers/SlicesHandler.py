@@ -22,8 +22,7 @@ class SlicesHandler(HandlerBase):
         logger.debug("Handling for chat '%s'..." % self._chat.id)
 
         self.__ensure_started()
-        self.__orders = self._orders.find_all_user(user=self._user, chat=self._chat)
-        self.__forced_orders = self._forced_orders.find_all_user(user=self._user, chat=self._chat)
+        self.__refresh_user_orders_cache()
 
         if len(self.__orders) < self._slices:
             self.__add_slices()
@@ -33,14 +32,16 @@ class SlicesHandler(HandlerBase):
             logger.debug("Nothing to do")
 
         self.__trim_forced_orders()
-
-        self.__orders = self._orders.find_all_user(user=self._user, chat=self._chat)
-        self.__forced_orders = self._forced_orders.find_all_user(user=self._user, chat=self._chat)
+        self.__refresh_user_orders_cache()
 
         logger.debug("Normal orders: %d, forced orders: %d" % (len(self.__orders), len(self.__forced_orders)))
 
         self.__send_user_status()
         self.__send_chat_status()
+
+    def __refresh_user_orders_cache(self):
+        self.__orders = self._orders.find_all_user(user=self._user, chat=self._chat)
+        self.__forced_orders = self._forced_orders.find_all_user(user=self._user, chat=self._chat)
 
     def __ensure_started(self):
         organizer = self._organizers.find_single(chat=self._chat)
@@ -53,6 +54,7 @@ class SlicesHandler(HandlerBase):
     def __add_slices(self):
         if len(self.__forced_orders) > 0:
             self.__move_forced_to_normal()
+            self.__refresh_user_orders_cache()
 
         orders_to_create = int(self._slices - len(self.__orders))
 
