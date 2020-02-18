@@ -38,14 +38,14 @@ class SkypeClient(SkypeEventLoop):
                 logger.exception("Non-exception raised")
                 raise
 
-    def send_direct_message(self, user_id, message: str):
-        self.contacts[user_id].chat.sendMsg(content=message)
+    def send_direct_message(self, user_id, message: str, me=False, rich=False):
+        self.contacts[user_id].chat.sendMsg(content=message, me=me, rich=rich)
 
-    def send_direct_response(self, message: str):
-        self.__current_event.msg.user.chat.sendMsg(content=message)
+    def send_direct_response(self, message: str, me=False, rich=False):
+        self.__current_event.msg.user.chat.sendMsg(content=message, me=me, rich=rich)
 
-    def send_group_response(self, message: str):
-        self.__current_event.msg.chat.sendMsg(content=message)
+    def send_group_response(self, message: str, me=False, rich=False):
+        self.__current_event.msg.chat.sendMsg(content=message, me=me, rich=rich)
 
     def __process_message_event(self, event):
         keyword = self.__get_keyword(event=event)
