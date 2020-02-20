@@ -8,13 +8,15 @@ logger = logging.getLogger(__name__)
 
 
 class SkypeClient(SkypeEventLoop):
-    def __init__(self, username: str, password: str):
+    def __init__(self, username: str, password: str, token_file: str):
         super().__init__()
 
         self._handlers = None
 
         self.__username = username
         self.__password = password
+        self.__token_file = token_file
+        self.__token_expiration_buffer = timedelta(minutes=5)
         self.__current_event = None
         self.__current_handler = None
 
@@ -35,6 +37,7 @@ class SkypeClient(SkypeEventLoop):
             try:
                 if not self.__verify_tokens():
                     logger.info("Tokens expired, reconnecting...")
+                    self.__clear_token_file()
                     self.__connect()
 
                 self.cycle()
@@ -56,14 +59,18 @@ class SkypeClient(SkypeEventLoop):
         self.__current_event.msg.chat.sendMsg(content=message, me=me, rich=rich)
 
     def __verify_tokens(self) -> bool:
-        offset_datetime = datetime.now() + timedelta(minutes=5)
+        offset_datetime = datetime.now() + self.__token_expiration_buffer
         is_skype_token_valid = "skype" in self.conn.tokenExpiry and offset_datetime < self.conn.tokenExpiry["skype"]
         is_reg_token_valid = "reg" in self.conn.tokenExpiry and offset_datetime < self.conn.tokenExpiry["reg"]
 
         return is_skype_token_valid and is_reg_token_valid
 
+    def __clear_token_file(self):
+        with open(self.__token_file, 'w') as token_file:
+            token_file.truncate(0)
+
     def __connect(self):
-        super(SkypeClient, self).__init__(user=self.__username, pwd=self.__password)
+        super(SkypeClient, self).__init__(user=self.__username, pwd=self.__password, tokenFile=self.__token_file)
 
     def __process_message_event(self, event):
         keyword = self.__get_keyword(event=event)
