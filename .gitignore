@@ -109,5 +109,4 @@ venv.bak/
 #PyCharm
 .idea
 
-token.txt
 db.json

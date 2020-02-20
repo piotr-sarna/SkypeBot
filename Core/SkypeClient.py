@@ -1,17 +1,20 @@
 import logging
+from datetime import datetime, timedelta
 from time import sleep
 
-from skpy import SkypeEventLoop, SkypeMessageEvent, SkypeEditMessageEvent, SkypeConnection, SkypeAuthException, \
-    SkypeApiException
+from skpy import SkypeEventLoop, SkypeMessageEvent, SkypeEditMessageEvent, SkypeAuthException, SkypeApiException
 
 logger = logging.getLogger(__name__)
 
 
 class SkypeClient(SkypeEventLoop):
-    def __init__(self, username: str, password: str, token_file: str):
-        super(SkypeClient, self).__init__(user=username, pwd=password, tokenFile=token_file)
+    def __init__(self, username: str, password: str):
+        super().__init__()
 
         self._handlers = None
+
+        self.__username = username
+        self.__password = password
         self.__current_event = None
         self.__current_handler = None
 
@@ -26,9 +29,14 @@ class SkypeClient(SkypeEventLoop):
             self.__process_message_event(event=event)
 
     def loop(self):
+        self.__connect()
+
         while True:
             try:
-                self.conn.verifyToken(SkypeConnection.Auth.SkypeToken)
+                if not self.__verify_tokens():
+                    logger.info("Tokens expired, reconnecting...")
+                    self.__connect()
+
                 self.cycle()
             except (SkypeAuthException, SkypeApiException, Exception) as ex:
                 logger.exception("%s raised", ex.__class__.__name__)
@@ -46,6 +54,16 @@ class SkypeClient(SkypeEventLoop):
 
     def send_group_response(self, message: str, me=False, rich=False):
         self.__current_event.msg.chat.sendMsg(content=message, me=me, rich=rich)
+
+    def __verify_tokens(self) -> bool:
+        offset_datetime = datetime.now() + timedelta(minutes=5)
+        is_skype_token_valid = "skype" in self.conn.tokenExpiry and offset_datetime < self.conn.tokenExpiry["skype"]
+        is_reg_token_valid = "reg" in self.conn.tokenExpiry and offset_datetime < self.conn.tokenExpiry["reg"]
+
+        return is_skype_token_valid and is_reg_token_valid
+
+    def __connect(self):
+        super(SkypeClient, self).__init__(user=self.__username, pwd=self.__password)
 
     def __process_message_event(self, event):
         keyword = self.__get_keyword(event=event)
@@ -75,7 +93,7 @@ class SkypeClient(SkypeEventLoop):
     def __generate_handlers(plugins):
         for plugin in plugins:
             for keyword in plugin.keywords():
-                yield (keyword.lower(), plugin)
+                yield keyword.lower(), plugin
 
     @staticmethod
     def __get_keyword(event):
