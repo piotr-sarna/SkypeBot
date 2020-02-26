@@ -88,15 +88,16 @@ class PizzaCalculator:
         all_orders = [self.__orders, self.__optional_orders, self.__forced_orders]
         all_orders = list(itertools.chain.from_iterable(all_orders))
         grouped_orders = OrdersHelper.group_by_user_id(orders=all_orders)
+        sorted_grouped_orders = OrdersHelper.sort_groups_by_doc_id(grouped_orders=grouped_orders)
 
         return [OrderSummary(
-            user_id=user_id,
+            user_id=orders[0].user_id,
             user_name=orders[0].user_name,
-            order=len(users_orders[user_id]),
+            order=len(users_orders[orders[0].user_id]),
             registered=len([order for order in orders if type(order) == Order]),
             optional=len([order for order in orders if type(order) == OptionalOrder]),
             to_remove=len([order for order in orders if type(order) == ForcedOrder])
-        ) for user_id, orders in grouped_orders.items()]
+        ) for orders in sorted_grouped_orders]
 
     def __try_complete_order(self):
         logger.debug("Trying to complete order")

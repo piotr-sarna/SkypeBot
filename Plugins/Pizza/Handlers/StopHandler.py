@@ -5,6 +5,7 @@ from skpy import SkypeMsg
 from Plugins.Pizza import PizzaPlugin
 from Plugins.Pizza.Handlers.HandlerBase import HandlerBase
 from Plugins.Pizza.Messages import Messages
+from Plugins.Pizza.Utils.OrdersHelper import OrdersHelper
 from Plugins.Pizza.Utils.PizzaCalculator import PizzaCalculator
 
 logger = logging.getLogger(__name__)
@@ -56,7 +57,8 @@ class StopHandler(HandlerBase):
 
     def __prepare_messages_components(self):
         users_orders = self.__pizza_calculator.users_orders
-        self.__orders_summaries = [Messages.order(orders[0], len(orders)) for _, orders in users_orders.items()]
+        sorted_users_orders = OrdersHelper.sort_groups_by_doc_id(grouped_orders=users_orders)
+        self.__orders_summaries = [Messages.order(orders[0], len(orders)) for orders in sorted_users_orders]
 
     def __send_user_status(self):
         self._client.send_direct_response(
