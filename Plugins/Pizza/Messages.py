@@ -22,8 +22,7 @@ Commands:
     NUMBER_OF_SLICES
     
 Number of slices must be an integer between 0 and 8.
-Number of optional slices must be an integer between 0 and 7.
-"""
+Number of optional slices must be an integer between 0 and 7."""
 START_DIRECT_MESSAGE_TEMPLATE = "You've started #pizza at {time} UTC. Please remember to #pizza #stop"
 START_GROUP_MESSAGE_TEMPLATE = "#pizza started by {user_name} ({user_id})"
 STOP_LUCKY_MESSAGE_TEMPLATE = "Lucky #pizza slice for {lucky_name} ({lucky_id})"

@@ -94,7 +94,7 @@ class SkypeClient(SkypeEventLoop):
         message += '\n\nException:\n' + str(exception)
 
         self.send_direct_response(message)
-        logger.warning(message)
+        logger.error(str(exception))
 
     @staticmethod
     def __generate_handlers(plugins):

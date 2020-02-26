@@ -135,4 +135,6 @@ class PizzaCalculator:
         self.__removed_orders = []
 
         for _ in range(redundant_orders_count):
-            self.__removed_orders.append(self.__reduced_orders.pop())
+            order = self.__reduced_orders.pop()
+            logger.debug("Removing order for %s" % order.user_id)
+            self.__removed_orders.append(order)

@@ -19,7 +19,7 @@ class SlicesHandler(HandlerBase):
         self.__forced_orders = None
 
     def handle(self):
-        logger.debug("Handling for chat '%s'..." % self._chat.id)
+        logger.debug("Handling for user '%s' at chat '%s'..." % (self._user.id, self._chat.id))
 
         self.__ensure_started()
         self.__refresh_user_orders_cache()

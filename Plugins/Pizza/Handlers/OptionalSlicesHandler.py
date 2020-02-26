@@ -17,7 +17,7 @@ class OptionalSlicesHandler(HandlerBase):
         self.__optional_orders = None
 
     def handle(self):
-        logger.debug("Handling for chat '%s'..." % self._chat.id)
+        logger.debug("Handling for user '%s' at chat '%s'..." % (self._user.id, self._chat.id))
 
         self.__ensure_started()
         self.__optional_orders = self._optional_orders.find_all_user(user=self._user, chat=self._chat)

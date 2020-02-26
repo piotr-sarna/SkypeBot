@@ -19,7 +19,7 @@ class StopHandler(HandlerBase):
         self.__pizza_calculator = None
 
     def handle(self):
-        logger.debug("Handling for chat '%s'..." % self._chat.id)
+        logger.debug("Handling for user '%s' at chat '%s'..." % (self._user.id, self._chat.id))
 
         self.__ensure_started()
         self.__ensure_used_by_organizer()
