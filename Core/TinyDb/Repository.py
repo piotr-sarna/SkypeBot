@@ -1,3 +1,4 @@
+import logging
 import urllib.parse
 from abc import ABC, abstractmethod
 from typing import List, Optional
@@ -6,6 +7,8 @@ from skpy import SkypeUser, SkypeChat
 from tinydb import TinyDB, Query
 
 from Core.TinyDb.ModelBase import ModelBase
+
+logger = logging.getLogger(__name__)
 
 
 class Repository(ABC):
@@ -26,18 +29,23 @@ class Repository(ABC):
             return
 
         doc_ids = self._table.insert_multiple(models)
+        logger.debug("%d models inserted with IDs: %s" % (len(doc_ids), doc_ids))
 
         for i in range(len(models)):
             models[i].doc_id = doc_ids[i]
 
     def remove(self, model: ModelBase):
         self._table.remove(doc_ids=[model.doc_id])
+        logger.debug("Removed model with ID: %s" % model.doc_id)
 
     def remove_multiple(self, models: List[ModelBase]):
-        self._table.remove(doc_ids=[model.doc_id for model in models])
+        doc_ids = [model.doc_id for model in models]
+        self._table.remove(doc_ids=doc_ids)
+        logger.debug("%d models removed with IDs: %s" % (len(doc_ids), doc_ids))
 
     def remove_all(self, chat: SkypeChat):
-        self._table.remove(Query().chat_id == chat.id)
+        doc_ids = self._table.remove(Query().chat_id == chat.id)
+        logger.debug("%d models removed with IDs: %s" % (len(doc_ids), doc_ids))
 
     def find_all(self, chat: SkypeChat) -> List:
         query = Query()
