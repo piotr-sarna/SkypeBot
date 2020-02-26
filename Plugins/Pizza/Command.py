@@ -32,9 +32,7 @@ class Command:
     def handle(self, plugin: PizzaPlugin, message: SkypeMsg):
         if self.help:
             HelpHandler(plugin=plugin, message=message).handle()
-            return
-
-        if self.start:
+        elif self.start:
             StartHandler(plugin=plugin, message=message).handle()
         elif self.stop:
             StopHandler(plugin=plugin, message=message).handle()
