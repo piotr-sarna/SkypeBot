@@ -25,7 +25,7 @@ class PizzaPlugin(PluginBase):
         return 'Pizza plugin'
 
     def version(self):
-        return '1.0.0-rc4'
+        return '1.0.0'
 
     def keywords(self):
         return ['pizza']
