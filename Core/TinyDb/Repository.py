@@ -50,14 +50,16 @@ class Repository(ABC):
     def find_all(self, chat: SkypeChat) -> List:
         query = Query()
         docs = self._table.search(query.chat_id == chat.id)
+        result = [self.MODEL_CLASS().fill(doc=doc) for doc in docs]
 
-        return [self.MODEL_CLASS().fill(doc=doc) for doc in docs]
+        return sorted(result, key=lambda x: x.doc_id)
 
     def find_all_user(self, user: SkypeUser, chat: SkypeChat) -> List:
         query = Query()
         docs = self._table.search((query.user_id == user.id) & (query.chat_id == chat.id))
+        result = [self.MODEL_CLASS().fill(doc=doc) for doc in docs]
 
-        return [self.MODEL_CLASS().fill(doc=doc) for doc in docs]
+        return sorted(result, key=lambda x: x.doc_id)
 
     def find_single(self, chat: SkypeChat) -> Optional[ModelBase]:
         objects = self.find_all(chat=chat)
