@@ -8,8 +8,6 @@ from tinydb import TinyDB, Query
 
 from Core.TinyDb.ModelBase import ModelBase
 
-logger = logging.getLogger(__name__)
-
 
 class Repository(ABC):
     @property
@@ -18,34 +16,37 @@ class Repository(ABC):
         pass
 
     def __init__(self, database: TinyDB, table_prefix: str):
+        self._logger = logging.getLogger(type(self).__module__)
         self._database = database
         self._table = database.table(urllib.parse.quote("%s_%s" % (table_prefix, type(self).__name__)))
 
     def insert(self, model: ModelBase):
-        model.doc_id = self._table.insert(model)
+        doc_id = self._table.insert(model)
+        self._logger.debug("Model inserted with ID: %s" % doc_id)
+        model.doc_id = doc_id
 
     def insert_multiple(self, models: List[ModelBase]):
         if len(models) == 0:
             return
 
         doc_ids = self._table.insert_multiple(models)
-        logger.debug("%d models inserted with IDs: %s" % (len(doc_ids), doc_ids))
+        self._logger.debug("%d models inserted with IDs: %s" % (len(doc_ids), doc_ids))
 
         for i in range(len(models)):
             models[i].doc_id = doc_ids[i]
 
     def remove(self, model: ModelBase):
         self._table.remove(doc_ids=[model.doc_id])
-        logger.debug("Removed model with ID: %s" % model.doc_id)
+        self._logger.debug("Model removed with ID: %s" % model.doc_id)
 
     def remove_multiple(self, models: List[ModelBase]):
         doc_ids = [model.doc_id for model in models]
         self._table.remove(doc_ids=doc_ids)
-        logger.debug("%d models removed with IDs: %s" % (len(doc_ids), doc_ids))
+        self._logger.debug("%d models removed with IDs: %s" % (len(doc_ids), doc_ids))
 
     def remove_all(self, chat: SkypeChat):
         doc_ids = self._table.remove(Query().chat_id == chat.id)
-        logger.debug("%d models removed with IDs: %s" % (len(doc_ids), doc_ids))
+        self._logger.debug("%d models removed with IDs: %s" % (len(doc_ids), doc_ids))
 
     def find_all(self, chat: SkypeChat) -> List:
         query = Query()

@@ -13,7 +13,7 @@ from Core.TinyDb.Serializers.DateTimeSerializer import DateTimeSerializer
 from Core.TinyDb.Serializers.SkypeUserNameSerializer import SkypeUserNameSerializer
 
 logging.basicConfig(
-    format='%(asctime)s %(module)s %(levelname)-8s %(message)s',
+    format='%(asctime)s %(name)s %(levelname)-8s %(message)s',
     level=os.environ.get('SKYPE_LOGGING_LEVEL', 'INFO'),
     datefmt='%Y-%m-%d %H:%M:%S')
 logger = logging.getLogger(__name__)
