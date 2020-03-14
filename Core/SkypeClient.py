@@ -2,6 +2,7 @@ import logging
 from datetime import datetime, timedelta
 from time import sleep
 
+from requests import ReadTimeout
 from skpy import SkypeEventLoop, SkypeMessageEvent, SkypeEditMessageEvent, SkypeAuthException, SkypeApiException
 
 logger = logging.getLogger(__name__)
@@ -41,7 +42,7 @@ class SkypeClient(SkypeEventLoop):
                     self.__connect()
 
                 self.cycle()
-            except (SkypeAuthException, SkypeApiException, Exception) as ex:
+            except (SkypeAuthException, SkypeApiException, ReadTimeout, Exception) as ex:
                 logger.exception("%s raised", ex.__class__.__name__)
                 logger.debug("Waiting 3 sec before retry...")
                 sleep(3)
