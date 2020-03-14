@@ -3,7 +3,8 @@ from datetime import datetime, timedelta
 from time import sleep
 
 from requests import ReadTimeout
-from skpy import SkypeEventLoop, SkypeMessageEvent, SkypeEditMessageEvent, SkypeAuthException, SkypeApiException
+from skpy import SkypeEventLoop, SkypeMessageEvent, SkypeEditMessageEvent, \
+    SkypeAuthException, SkypeApiException, SkypeConnection, SkypeUtils
 
 logger = logging.getLogger(__name__)
 
@@ -23,6 +24,11 @@ class SkypeClient(SkypeEventLoop):
 
     def register_plugins(self, plugins):
         self._handlers = dict(self.__generate_handlers(plugins=plugins))
+
+    def setPresence(self, *args, **kwargs):
+        self.conn.syncEndpoints()
+        self.__set_active()
+        super().setPresence(*args, **kwargs)
 
     def onEvent(self, event):
         is_message_event = isinstance(event, SkypeMessageEvent)
@@ -71,7 +77,16 @@ class SkypeClient(SkypeEventLoop):
             token_file.truncate(0)
 
     def __connect(self):
-        super(SkypeClient, self).__init__(user=self.__username, pwd=self.__password, tokenFile=self.__token_file)
+        super(SkypeClient, self).__init__(
+            user=self.__username,
+            pwd=self.__password,
+            tokenFile=self.__token_file,
+            status=SkypeUtils.Status.Online
+        )
+
+    def __set_active(self):
+        self.conn("POST", "{0}/users/ME/endpoints/{1}/active".format(self.conn.msgsHost, self.conn.endpoints["all"][0].id),
+                  auth=SkypeConnection.Auth.RegToken, json={"timeout": 120})
 
     def __process_message_event(self, event):
         keyword = self.__get_keyword(event=event)
